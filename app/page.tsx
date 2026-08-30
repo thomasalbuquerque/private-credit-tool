@@ -7,6 +7,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
 import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
+import Skeleton from '@/components/ui/Skeleton';
 import { getDeals } from '@/services/dealService';
 import type { Deal } from '@/types';
 import { cn, formatMillions, formatLongDate, relativeDate, stageBadgeVariant } from '@/lib/utils';
@@ -73,10 +74,6 @@ function ActivityRow({ action, company, relDate, isLast }: ActivityRowProps) {
       </div>
     </div>
   );
-}
-
-function PulseSkeleton({ className }: { className?: string }) {
-  return <div className={cn('animate-pulse rounded-lg bg-slate-200', className)} />;
 }
 
 const RISK_COLORS = {
@@ -179,10 +176,10 @@ export default function DashboardPage() {
       <div className='mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4'>
         {isLoading ? (
           <>
-            <PulseSkeleton className='h-28' />
-            <PulseSkeleton className='h-28' />
-            <PulseSkeleton className='h-28' />
-            <PulseSkeleton className='h-28' />
+            <Skeleton className='h-28' />
+            <Skeleton className='h-28' />
+            <Skeleton className='h-28' />
+            <Skeleton className='h-28' />
           </>
         ) : (
           <>
@@ -223,7 +220,7 @@ export default function DashboardPage() {
         <h2 className='mb-3 text-sm font-semibold uppercase tracking-wider text-slate-500'>Pipeline Summary</h2>
         <div className='grid grid-cols-2 gap-4 lg:grid-cols-4'>
           {isLoading
-            ? Array.from({ length: 4 }).map((_, i) => <PulseSkeleton key={i} className='h-24' />)
+            ? Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className='h-24' />)
             : pipelineCounts.map(({ stage, count }) => {
                 const style = pipelineStyle[stage] ?? {
                   borderColor: 'border-l-slate-400',
@@ -240,7 +237,7 @@ export default function DashboardPage() {
         <div className='lg:col-span-1'>
           <Card title='Risk Distribution'>
             {isLoading ? (
-              <PulseSkeleton className='h-48' />
+              <Skeleton className='h-48' />
             ) : (
               <>
                 <ResponsiveContainer width='100%' height={180}>
@@ -286,7 +283,7 @@ export default function DashboardPage() {
         <div className='lg:col-span-1'>
           <Card title='Recent Activity'>
             {isLoading ? (
-              <PulseSkeleton className='h-64' />
+              <Skeleton className='h-64' />
             ) : recentActivity.length === 0 ? (
               <p className='text-sm text-slate-400'>No recent activity.</p>
             ) : (
@@ -309,7 +306,7 @@ export default function DashboardPage() {
         <div className='lg:col-span-1'>
           <Card title='Recent Deals'>
             {isLoading ? (
-              <PulseSkeleton className='h-64' />
+              <Skeleton className='h-64' />
             ) : (
               <div className='-mx-5 -mt-5'>
                 <table className='w-full text-sm'>

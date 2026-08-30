@@ -9,9 +9,10 @@ import Badge from '@/components/ui/Badge';
 import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
 import Toast from '@/components/ui/Toast';
+import Skeleton from '@/components/ui/Skeleton';
 import { getDeals, createDeal } from '@/services/dealService';
 import type { Deal, DealStage } from '@/types';
-import { cn, formatMillions, stageBadgeVariant } from '@/lib/utils';
+import { cn, formatMillions, getInitials, riskColor, stageBadgeVariant } from '@/lib/utils';
 
 const STAGE_OPTIONS: DealStage[] = ['Screening', 'Due Diligence', 'IC Review', 'Closed'];
 
@@ -37,22 +38,6 @@ const EMPTY_FORM: NewDealFormState = {
   owner: '',
 };
 
-function getInitials(name: string): string {
-  return name
-    .split(' ')
-    .filter(Boolean)
-    .map((part) => part[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase();
-}
-
-function riskColor(score: number): { bar: string; text: string } {
-  if (score >= 70) return { bar: 'bg-emerald-500', text: 'text-emerald-700' };
-  if (score >= 40) return { bar: 'bg-amber-500', text: 'text-amber-700' };
-  return { bar: 'bg-red-500', text: 'text-red-700' };
-}
-
 function RiskBar({ score }: { score: number }) {
   const { bar, text } = riskColor(score);
   return (
@@ -63,10 +48,6 @@ function RiskBar({ score }: { score: number }) {
       <span className={cn('text-xs font-medium tabular-nums', text)}>{score}/100</span>
     </div>
   );
-}
-
-function PulseSkeleton({ className }: { className?: string }) {
-  return <div className={cn('animate-pulse rounded-lg bg-slate-200', className)} />;
 }
 
 export default function DealsPage() {
@@ -221,7 +202,7 @@ export default function DealsPage() {
         {isLoading ? (
           <div className='space-y-3'>
             {Array.from({ length: 5 }).map((_, i) => (
-              <PulseSkeleton key={i} className='h-12' />
+              <Skeleton key={i} className='h-12' />
             ))}
           </div>
         ) : filteredDeals.length === 0 ? (
