@@ -1,7 +1,7 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import type { BadgeVariant } from '@/components/ui/Badge';
-import type { DealStage, RiskStatus } from '@/types';
+import type { DealStage, FindingStatus, RiskLevel, RiskStatus, WorkstreamStatus } from '@/types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -81,4 +81,40 @@ export function riskStatusLabel(status: RiskStatus): string {
     red: 'Elevated concern',
   };
   return map[status];
+}
+
+export function workstreamStatusBadgeVariant(status: WorkstreamStatus): BadgeVariant {
+  const map: Record<WorkstreamStatus, BadgeVariant> = {
+    Complete: 'complete',
+    'In Progress': 'in-progress',
+    Pending: 'pending',
+  };
+  return map[status];
+}
+
+export function riskLevelBadgeVariant(level: RiskLevel): BadgeVariant {
+  const map: Record<RiskLevel, BadgeVariant> = {
+    High: 'high',
+    Medium: 'medium',
+    Low: 'low',
+  };
+  return map[level];
+}
+
+export function findingStatusBadgeVariant(status: FindingStatus): BadgeVariant {
+  const map: Record<FindingStatus, BadgeVariant> = {
+    Open: 'open',
+    Mitigated: 'mitigated',
+    Monitoring: 'monitoring',
+  };
+  return map[status];
+}
+
+export function riskLevelAccent(level: RiskLevel): string {
+  const map: Record<RiskLevel, string> = {
+    High: 'border-l-red-500',
+    Medium: 'border-l-amber-500',
+    Low: 'border-l-emerald-500',
+  };
+  return map[level];
 }

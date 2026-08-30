@@ -11,6 +11,7 @@ import Skeleton from '@/components/ui/Skeleton';
 import Tabs, { type TabItem } from '@/components/ui/Tabs';
 import OverviewTab from '@/components/deals/OverviewTab';
 import SecuritiesTab from '@/components/deals/SecuritiesTab';
+import DueDiligenceTab from '@/components/deals/DueDiligenceTab';
 import { getDealById } from '@/services/dealService';
 import type { Deal } from '@/types';
 import { formatMillions, getInitials, stageBadgeVariant } from '@/lib/utils';
@@ -126,7 +127,7 @@ export default function DealDetailsPage() {
       <div>
         {activeTab === 'overview' && <OverviewTab deal={deal} />}
         {activeTab === 'securities' && <SecuritiesTab dealId={deal.id} />}
-        {activeTab === 'diligence' && <ComingSoon label='Due Diligence' />}
+        {activeTab === 'diligence' && <DueDiligenceTab dealId={deal.id} />}
         {activeTab === 'memo' && <ComingSoon label='IC Memo' />}
       </div>
     </div>
