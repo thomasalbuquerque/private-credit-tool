@@ -17,7 +17,10 @@ export default function Sidebar() {
     <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col bg-slate-900 md:flex">
       <div className="flex items-center gap-2 px-5 py-6">
         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-500/20">
-          <Building2 className="h-5 w-5 text-indigo-300" />
+          <Building2
+            className="h-5 w-5 text-indigo-300"
+            suppressHydrationWarning
+          />
         </div>
         <span className="text-base font-semibold tracking-tight text-white">
           CreditDesk
@@ -43,7 +46,7 @@ export default function Sidebar() {
                   : "text-slate-400 hover:bg-slate-800/60 hover:text-slate-100"
               )}
             >
-              <Icon className="h-5 w-5" />
+              <Icon className="h-5 w-5" suppressHydrationWarning />
               {item.label}
             </Link>
           );
