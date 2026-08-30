@@ -1,0 +1,122 @@
+[
+  {
+    "id": "sec-001",
+    "dealId": "deal-001",
+    "type": "Senior Secured Term Loan",
+    "amount": 55,
+    "rate": "SOFR + 575bps",
+    "maturity": "5 years",
+    "originationFee": "1.5%",
+    "covenants": [
+      { "id": "cov-001-1", "name": "Maximum Total Leverage Ratio", "threshold": "\u2264 4.50x Total Debt / EBITDA" },
+      { "id": "cov-001-2", "name": "Minimum Fixed Charge Coverage Ratio", "threshold": "\u2265 1.20x" },
+      { "id": "cov-001-3", "name": "Minimum Liquidity", "threshold": "\u2265 $5.0m unrestricted cash" }
+    ],
+    "collateral": [
+      "Manufacturing facilities (Ohio & Texas)",
+      "Equipment and machinery",
+      "Inventory",
+      "Accounts receivable"
+    ]
+  },
+  {
+    "id": "sec-002",
+    "dealId": "deal-002",
+    "type": "Senior Secured Unitranche Term Loan",
+    "amount": 85,
+    "rate": "SOFR + 650bps",
+    "maturity": "6 years",
+    "originationFee": "2.0%",
+    "covenants": [
+      { "id": "cov-002-1", "name": "Maximum Net Leverage Ratio", "threshold": "\u2264 5.25x" },
+      { "id": "cov-002-2", "name": "Minimum TTM EBITDA", "threshold": "\u2265 $28.0m" },
+      { "id": "cov-002-3", "name": "Minimum Fixed Charge Coverage Ratio", "threshold": "\u2265 1.15x" }
+    ],
+    "collateral": [
+      "Laboratory equipment",
+      "Accounts receivable",
+      "Owned laboratory and processing facilities",
+      "Licenses and CLIA certifications"
+    ]
+  },
+  {
+    "id": "sec-003",
+    "dealId": "deal-003",
+    "type": "Unitranche Term Loan",
+    "amount": 120,
+    "rate": "SOFR + 725bps",
+    "maturity": "5 years",
+    "originationFee": "2.5%",
+    "covenants": [
+      { "id": "cov-003-1", "name": "Maximum Net Leverage Ratio", "threshold": "\u2264 6.00x" },
+      { "id": "cov-003-2", "name": "Minimum Annual Recurring Revenue", "threshold": "\u2265 $95.0m" },
+      { "id": "cov-003-3", "name": "Minimum Liquidity", "threshold": "\u2265 $8.0m" }
+    ],
+    "collateral": [
+      "Intellectual property and source code",
+      "Customer contracts and subscription receivables",
+      "Equipment and data center leases",
+      "Cash and deposit accounts"
+    ]
+  },
+  {
+    "id": "sec-004",
+    "dealId": "deal-004",
+    "type": "Senior Secured Term Loan (ABL-Supported)",
+    "amount": 45,
+    "rate": "SOFR + 550bps",
+    "maturity": "4 years",
+    "originationFee": "1.5%",
+    "covenants": [
+      { "id": "cov-004-1", "name": "Maximum Total Leverage Ratio", "threshold": "\u2264 3.75x" },
+      { "id": "cov-004-2", "name": "Minimum Fixed Charge Coverage Ratio", "threshold": "\u2265 1.25x" },
+      { "id": "cov-004-3", "name": "Minimum Same-Store Sales Growth", "threshold": "\u2265 -2.0%" }
+    ],
+    "collateral": [
+      "Merchandise inventory",
+      "Accounts receivable",
+      "Store leasehold improvements",
+      "Brand and trademark IP"
+    ]
+  },
+  {
+    "id": "sec-005",
+    "dealId": "deal-005",
+    "type": "Senior Secured Term Loan B",
+    "amount": 95,
+    "rate": "SOFR + 500bps",
+    "maturity": "7 years",
+    "originationFee": "1.0%",
+    "covenants": [
+      { "id": "cov-005-1", "name": "Maximum Total Leverage Ratio", "threshold": "\u2264 3.50x" },
+      { "id": "cov-005-2", "name": "Minimum Debt Service Coverage Ratio", "threshold": "\u2265 1.30x" },
+      { "id": "cov-005-3", "name": "Minimum Interest Coverage Ratio", "threshold": "\u2265 2.50x" }
+    ],
+    "collateral": [
+      "Gathering and processing infrastructure",
+      "Pipeline and compression assets",
+      "Long-term offtake and transportation agreements",
+      "Real property easements and rights-of-way"
+    ]
+  },
+  {
+    "id": "sec-006",
+    "dealId": "deal-006",
+    "type": "Senior Secured Mortgage Loan",
+    "amount": 150,
+    "rate": "SOFR + 425bps",
+    "maturity": "10 years",
+    "originationFee": "1.0%",
+    "covenants": [
+      { "id": "cov-006-1", "name": "Maximum Loan-to-Value Ratio", "threshold": "\u2264 65%" },
+      { "id": "cov-006-2", "name": "Minimum Debt Service Coverage Ratio", "threshold": "\u2265 1.35x" },
+      { "id": "cov-006-3", "name": "Minimum Portfolio Occupancy", "threshold": "\u2265 90%" }
+    ],
+    "collateral": [
+      "First mortgage liens on logistics properties",
+      "Assignment of tenant leases",
+      "Ground lease interests",
+      "Insurance and condemnation proceeds"
+    ]
+  }
+]

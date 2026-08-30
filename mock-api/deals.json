@@ -1,0 +1,200 @@
+[
+  {
+    "id": "deal-001",
+    "companyName": "Meridian Industrial Coatings",
+    "industry": "Industrial",
+    "dealSize": 55,
+    "revenue": 148,
+    "ebitda": 19.5,
+    "leverage": 4.4,
+    "sponsor": "Carlyle",
+    "stage": "Screening",
+    "owner": "Sarah Johnson",
+    "riskScore": 52,
+    "riskBreakdown": {
+      "financials": "yellow",
+      "collateral": "green",
+      "industry": "yellow",
+      "legal": "green"
+    },
+    "createdAt": "2026-08-04T09:00:00Z",
+    "timeline": [
+      { "label": "Initial Screening", "date": "2026-08-04", "completed": true },
+      { "label": "NDA Executed", "date": "2026-08-11", "completed": true },
+      { "label": "Management Presentation", "date": "2026-09-08", "completed": false },
+      { "label": "Due Diligence Kickoff", "date": "2026-09-19", "completed": false },
+      { "label": "IC Review", "date": "2026-10-10", "completed": false },
+      { "label": "Closing", "date": "2026-11-07", "completed": false }
+    ],
+    "recentActivity": [
+      { "action": "Received initial CIM and management deck", "date": "2026-08-25" },
+      { "action": "Scheduled management presentation call", "date": "2026-08-20" },
+      { "action": "Added to pipeline after sponsor introduction", "date": "2026-08-04" }
+    ]
+  },
+  {
+    "id": "deal-002",
+    "companyName": "Apex Diagnostics Holdings",
+    "industry": "Healthcare",
+    "dealSize": 85,
+    "revenue": 210,
+    "ebitda": 34,
+    "leverage": 4.8,
+    "sponsor": "KKR",
+    "stage": "Due Diligence",
+    "owner": "Michael Chen",
+    "riskScore": 61,
+    "riskBreakdown": {
+      "financials": "green",
+      "collateral": "yellow",
+      "industry": "green",
+      "legal": "yellow"
+    },
+    "createdAt": "2026-06-22T09:00:00Z",
+    "timeline": [
+      { "label": "Initial Screening", "date": "2026-06-22", "completed": true },
+      { "label": "NDA Executed", "date": "2026-06-29", "completed": true },
+      { "label": "Management Presentation", "date": "2026-07-13", "completed": true },
+      { "label": "Due Diligence Kickoff", "date": "2026-07-20", "completed": true },
+      { "label": "IC Review", "date": "2026-09-15", "completed": false },
+      { "label": "Closing", "date": "2026-10-15", "completed": false }
+    ],
+    "recentActivity": [
+      { "action": "Completed third-party quality of earnings report review", "date": "2026-08-22" },
+      { "action": "Legal counsel flagged CLIA licensing renewal timeline", "date": "2026-08-15" },
+      { "action": "Kicked off financial due diligence with QoE provider", "date": "2026-07-20" }
+    ]
+  },
+  {
+    "id": "deal-003",
+    "companyName": "Nimbus Cloud Systems",
+    "industry": "Technology",
+    "dealSize": 120,
+    "revenue": 98,
+    "ebitda": 28,
+    "leverage": 5.6,
+    "sponsor": "Vista Equity Partners",
+    "stage": "Due Diligence",
+    "owner": "Rachel Kim",
+    "riskScore": 47,
+    "riskBreakdown": {
+      "financials": "green",
+      "collateral": "red",
+      "industry": "yellow",
+      "legal": "green"
+    },
+    "createdAt": "2026-07-01T09:00:00Z",
+    "timeline": [
+      { "label": "Initial Screening", "date": "2026-07-01", "completed": true },
+      { "label": "NDA Executed", "date": "2026-07-08", "completed": true },
+      { "label": "Management Presentation", "date": "2026-07-22", "completed": true },
+      { "label": "Due Diligence Kickoff", "date": "2026-07-29", "completed": true },
+      { "label": "IC Review", "date": "2026-09-22", "completed": false },
+      { "label": "Closing", "date": "2026-10-20", "completed": false }
+    ],
+    "recentActivity": [
+      { "action": "Completed technical architecture and security assessment", "date": "2026-08-24" },
+      { "action": "Reviewed customer cohort and net revenue retention data", "date": "2026-08-17" },
+      { "action": "Initiated cybersecurity vendor diligence engagement", "date": "2026-08-01" }
+    ]
+  },
+  {
+    "id": "deal-004",
+    "companyName": "Coastal Retail Group",
+    "industry": "Retail",
+    "dealSize": 45,
+    "revenue": 175,
+    "ebitda": 16,
+    "leverage": 3.6,
+    "sponsor": "Apollo",
+    "stage": "IC Review",
+    "owner": "David Park",
+    "riskScore": 68,
+    "riskBreakdown": {
+      "financials": "yellow",
+      "collateral": "green",
+      "industry": "red",
+      "legal": "green"
+    },
+    "createdAt": "2026-05-10T09:00:00Z",
+    "timeline": [
+      { "label": "Initial Screening", "date": "2026-05-10", "completed": true },
+      { "label": "NDA Executed", "date": "2026-05-17", "completed": true },
+      { "label": "Management Presentation", "date": "2026-06-02", "completed": true },
+      { "label": "Due Diligence Kickoff", "date": "2026-06-16", "completed": true },
+      { "label": "IC Review", "date": "2026-08-19", "completed": true },
+      { "label": "Closing", "date": "2026-09-25", "completed": false }
+    ],
+    "recentActivity": [
+      { "action": "Submitted deal to Investment Committee for review", "date": "2026-08-19" },
+      { "action": "Finalized term sheet negotiation with sponsor counsel", "date": "2026-08-12" },
+      { "action": "Completed store-level lease and occupancy cost analysis", "date": "2026-07-30" }
+    ]
+  },
+  {
+    "id": "deal-005",
+    "companyName": "Summit Energy Partners",
+    "industry": "Energy",
+    "dealSize": 95,
+    "revenue": 260,
+    "ebitda": 42,
+    "leverage": 3.2,
+    "sponsor": "Ares",
+    "stage": "IC Review",
+    "owner": "James Torres",
+    "riskScore": 44,
+    "riskBreakdown": {
+      "financials": "green",
+      "collateral": "green",
+      "industry": "yellow",
+      "legal": "yellow"
+    },
+    "createdAt": "2026-04-18T09:00:00Z",
+    "timeline": [
+      { "label": "Initial Screening", "date": "2026-04-18", "completed": true },
+      { "label": "NDA Executed", "date": "2026-04-25", "completed": true },
+      { "label": "Management Presentation", "date": "2026-05-09", "completed": true },
+      { "label": "Due Diligence Kickoff", "date": "2026-05-23", "completed": true },
+      { "label": "IC Review", "date": "2026-08-14", "completed": true },
+      { "label": "Closing", "date": "2026-09-18", "completed": false }
+    ],
+    "recentActivity": [
+      { "action": "Presented deal at Investment Committee meeting", "date": "2026-08-14" },
+      { "action": "Completed reserve engineering and offtake contract review", "date": "2026-08-05" },
+      { "action": "Received updated hedging strategy from sponsor", "date": "2026-07-22" }
+    ]
+  },
+  {
+    "id": "deal-006",
+    "companyName": "Harborview Logistics Centers",
+    "industry": "Real Estate",
+    "dealSize": 150,
+    "revenue": 38,
+    "ebitda": 31,
+    "leverage": 5.1,
+    "sponsor": "Blackstone",
+    "stage": "Closed",
+    "owner": "Emily Zhang",
+    "riskScore": 29,
+    "riskBreakdown": {
+      "financials": "green",
+      "collateral": "green",
+      "industry": "green",
+      "legal": "green"
+    },
+    "createdAt": "2026-02-05T09:00:00Z",
+    "timeline": [
+      { "label": "Initial Screening", "date": "2026-02-05", "completed": true },
+      { "label": "NDA Executed", "date": "2026-02-12", "completed": true },
+      { "label": "Management Presentation", "date": "2026-02-27", "completed": true },
+      { "label": "Due Diligence Kickoff", "date": "2026-03-13", "completed": true },
+      { "label": "IC Review", "date": "2026-04-24", "completed": true },
+      { "label": "Closing", "date": "2026-05-29", "completed": true }
+    ],
+    "recentActivity": [
+      { "action": "Funded initial term loan advance at closing", "date": "2026-05-29" },
+      { "action": "Executed final loan and security agreements", "date": "2026-05-27" },
+      { "action": "Received final IC approval with amended covenant package", "date": "2026-04-24" }
+    ]
+  }
+]

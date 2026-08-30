@@ -1,0 +1,254 @@
+[
+  {
+    "dealId": "deal-001",
+    "workstreams": [
+      { "name": "Financial", "status": "In Progress" },
+      { "name": "Legal", "status": "Pending" },
+      { "name": "Commercial", "status": "In Progress" },
+      { "name": "ESG", "status": "Pending" },
+      { "name": "Technical", "status": "Pending" }
+    ],
+    "findings": [
+      {
+        "id": "find-001-1",
+        "dealId": "deal-001",
+        "title": "Customer Concentration Risk",
+        "description": "Top three customers represent approximately 48% of total revenue, with the largest single customer accounting for 22%.",
+        "riskLevel": "High",
+        "mitigation": "Requesting multi-year contract extensions and evaluating a customer diversification plan with management prior to IC submission.",
+        "owner": "Sarah Johnson",
+        "status": "Open"
+      },
+      {
+        "id": "find-001-2",
+        "dealId": "deal-001",
+        "title": "Environmental Liabilities",
+        "description": "Legacy chemical handling and coating operations at the Ohio facility may carry unassessed environmental remediation exposure.",
+        "riskLevel": "Medium",
+        "mitigation": "Engaging a Phase II environmental site assessment; closing will be conditioned on satisfactory findings.",
+        "owner": "Sarah Johnson",
+        "status": "Open"
+      }
+    ]
+  },
+  {
+    "dealId": "deal-002",
+    "workstreams": [
+      { "name": "Financial", "status": "Complete" },
+      { "name": "Legal", "status": "In Progress" },
+      { "name": "Commercial", "status": "Complete" },
+      { "name": "ESG", "status": "In Progress" },
+      { "name": "Technical", "status": "Pending" }
+    ],
+    "findings": [
+      {
+        "id": "find-002-1",
+        "dealId": "deal-002",
+        "title": "Regulatory Exposure",
+        "description": "Recent CMS reimbursement rate changes for molecular diagnostics testing could compress margins on roughly 30% of test volume.",
+        "riskLevel": "High",
+        "mitigation": "Modeling downside reimbursement scenarios and stress-testing covenant headroom; sponsor has agreed to an equity cure provision.",
+        "owner": "Michael Chen",
+        "status": "Monitoring"
+      },
+      {
+        "id": "find-002-2",
+        "dealId": "deal-002",
+        "title": "Key Personnel Dependency",
+        "description": "Founder-CEO holds significant institutional relationships and lab accreditation oversight with no identified successor.",
+        "riskLevel": "Medium",
+        "mitigation": "Negotiating key-person insurance and a 24-month employment and non-compete agreement as a closing condition.",
+        "owner": "Michael Chen",
+        "status": "Open"
+      },
+      {
+        "id": "find-002-3",
+        "dealId": "deal-002",
+        "title": "Acquisition Integration Risk",
+        "description": "Three tuck-in lab acquisitions completed in the past 18 months have not yet been fully integrated onto a common billing and LIS platform.",
+        "riskLevel": "Medium",
+        "mitigation": "Commercial diligence team is validating the integration roadmap and synergy assumptions with a third-party consultant.",
+        "owner": "Michael Chen",
+        "status": "Monitoring"
+      }
+    ]
+  },
+  {
+    "dealId": "deal-003",
+    "workstreams": [
+      { "name": "Financial", "status": "Complete" },
+      { "name": "Legal", "status": "In Progress" },
+      { "name": "Commercial", "status": "Complete" },
+      { "name": "ESG", "status": "Pending" },
+      { "name": "Technical", "status": "Complete" }
+    ],
+    "findings": [
+      {
+        "id": "find-003-1",
+        "dealId": "deal-003",
+        "title": "Cybersecurity & Data Privacy Exposure",
+        "description": "A prior penetration test identified unresolved vulnerabilities in the customer-facing API layer that handles sensitive supply chain data.",
+        "riskLevel": "High",
+        "mitigation": "Requiring remediation plan completion and an independent re-test prior to closing, backstopped by a cyber insurance covenant.",
+        "owner": "Rachel Kim",
+        "status": "Open"
+      },
+      {
+        "id": "find-003-2",
+        "dealId": "deal-003",
+        "title": "Customer Concentration Risk",
+        "description": "Top five customers represent 34% of annual recurring revenue, with average contract tenure of just 2.1 years.",
+        "riskLevel": "Medium",
+        "mitigation": "Reviewing net revenue retention trends and renewal pipeline; building a concentration covenant into the credit agreement.",
+        "owner": "Rachel Kim",
+        "status": "Monitoring"
+      },
+      {
+        "id": "find-003-3",
+        "dealId": "deal-003",
+        "title": "Revenue Recognition Practices",
+        "description": "Company recognizes a portion of implementation fees upfront rather than over the service period, inflating near-term reported revenue.",
+        "riskLevel": "Medium",
+        "mitigation": "QoE provider adjusted normalized EBITDA for the recognition policy; sponsor has agreed to restate historicals.",
+        "owner": "Rachel Kim",
+        "status": "Mitigated"
+      }
+    ]
+  },
+  {
+    "dealId": "deal-004",
+    "workstreams": [
+      { "name": "Financial", "status": "Complete" },
+      { "name": "Legal", "status": "Complete" },
+      { "name": "Commercial", "status": "Complete" },
+      { "name": "ESG", "status": "In Progress" },
+      { "name": "Technical", "status": "Complete" }
+    ],
+    "findings": [
+      {
+        "id": "find-004-1",
+        "dealId": "deal-004",
+        "title": "Same-Store Sales Deceleration",
+        "description": "Same-store sales growth decelerated from 6.2% to 1.1% over the trailing four quarters amid a discretionary spending pullback.",
+        "riskLevel": "High",
+        "mitigation": "Incorporated conservative base-case sales assumptions into the credit model; structured a springing cash-flow sweep tied to performance triggers.",
+        "owner": "David Park",
+        "status": "Monitoring"
+      },
+      {
+        "id": "find-004-2",
+        "dealId": "deal-004",
+        "title": "Lease Renewal & Occupancy Cost Risk",
+        "description": "18% of store leases (by revenue) expire within the next 24 months, exposing the company to rent escalation risk.",
+        "riskLevel": "Medium",
+        "mitigation": "Commercial team reviewed landlord relationships and renewal terms; no material closures are anticipated.",
+        "owner": "David Park",
+        "status": "Monitoring"
+      },
+      {
+        "id": "find-004-3",
+        "dealId": "deal-004",
+        "title": "E-commerce Channel Underinvestment",
+        "description": "Digital channel represents only 9% of sales, below the 15-20% typical for specialty retail peers.",
+        "riskLevel": "Medium",
+        "mitigation": "Sponsor has committed to a post-close capex plan for digital platform investment, tracked via a use-of-proceeds covenant.",
+        "owner": "David Park",
+        "status": "Open"
+      },
+      {
+        "id": "find-004-4",
+        "dealId": "deal-004",
+        "title": "Supply Chain & Tariff Exposure",
+        "description": "Approximately 40% of sourced goods originate from tariff-exposed regions, creating potential cost inflation risk.",
+        "riskLevel": "Medium",
+        "mitigation": "Management is diversifying sourcing to Vietnam and Mexico; progress is monitored via a quarterly reporting covenant.",
+        "owner": "David Park",
+        "status": "Monitoring"
+      }
+    ]
+  },
+  {
+    "dealId": "deal-005",
+    "workstreams": [
+      { "name": "Financial", "status": "Complete" },
+      { "name": "Legal", "status": "Complete" },
+      { "name": "Commercial", "status": "Complete" },
+      { "name": "ESG", "status": "Complete" },
+      { "name": "Technical", "status": "In Progress" }
+    ],
+    "findings": [
+      {
+        "id": "find-005-1",
+        "dealId": "deal-005",
+        "title": "Commodity Price Sensitivity",
+        "description": "Approximately 25% of gathering and processing margin remains directly exposed to natural gas and NGL price movements.",
+        "riskLevel": "Medium",
+        "mitigation": "Sponsor has layered on additional hedges covering 70% of forecasted volumes through 2028.",
+        "owner": "James Torres",
+        "status": "Mitigated"
+      },
+      {
+        "id": "find-005-2",
+        "dealId": "deal-005",
+        "title": "Regulatory & Environmental Permitting Risk",
+        "description": "Pending state-level methane emissions rules could require capital investment in leak detection and monitoring equipment.",
+        "riskLevel": "Medium",
+        "mitigation": "Technical diligence estimates compliance capex at under $4m; included in the base-case financial model.",
+        "owner": "James Torres",
+        "status": "Monitoring"
+      },
+      {
+        "id": "find-005-3",
+        "dealId": "deal-005",
+        "title": "Counterparty Concentration in Offtake Agreements",
+        "description": "Two counterparties represent 55% of contracted gathering volumes under long-term agreements.",
+        "riskLevel": "Low",
+        "mitigation": "Both counterparties are investment-grade rated; legal team confirmed no cross-default provisions with the borrower.",
+        "owner": "James Torres",
+        "status": "Monitoring"
+      }
+    ]
+  },
+  {
+    "dealId": "deal-006",
+    "workstreams": [
+      { "name": "Financial", "status": "Complete" },
+      { "name": "Legal", "status": "Complete" },
+      { "name": "Commercial", "status": "Complete" },
+      { "name": "ESG", "status": "Complete" },
+      { "name": "Technical", "status": "Complete" }
+    ],
+    "findings": [
+      {
+        "id": "find-006-1",
+        "dealId": "deal-006",
+        "title": "Tenant Concentration in Anchor Leases",
+        "description": "Top two tenants represent 41% of portfolio rental income under leases with staggered expirations through 2033.",
+        "riskLevel": "Low",
+        "mitigation": "Structured a minimum occupancy covenant and lease assignment as collateral to protect against tenant loss.",
+        "owner": "Emily Zhang",
+        "status": "Mitigated"
+      },
+      {
+        "id": "find-006-2",
+        "dealId": "deal-006",
+        "title": "Interest Rate Refinancing Risk",
+        "description": "Floating-rate loan structure exposed the borrower to rate volatility ahead of a 2031 refinancing wall.",
+        "riskLevel": "Low",
+        "mitigation": "Borrower executed an interest rate cap covering 100% of the loan balance for the first five years, required at closing.",
+        "owner": "Emily Zhang",
+        "status": "Mitigated"
+      },
+      {
+        "id": "find-006-3",
+        "dealId": "deal-006",
+        "title": "Property Condition & Deferred Maintenance",
+        "description": "Engineering report identified approximately $2.1m of deferred roof and HVAC maintenance across the portfolio.",
+        "riskLevel": "Low",
+        "mitigation": "Established a lender-controlled capex reserve account funded at closing to cover identified deferred maintenance.",
+        "owner": "Emily Zhang",
+        "status": "Mitigated"
+      }
+    ]
+  }
+]
