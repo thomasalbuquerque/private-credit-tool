@@ -196,6 +196,7 @@ Export:
 - getMemoByDealId(dealId: string): Promise<ICMemo | undefined>
 - generateMemo(dealId: string, content: string): Promise<ICMemo>
   Push to in-memory array, log to console with comment // TODO: replace with POST /api/memos
+  (PROMPT 10B replaces this mock with a real POST /api/memos call that hits an LLM provider)
 
 Important rule: UI components must NEVER import JSON files directly. They must always go through these service functions. Add a JSDoc comment to each service file explaining this rule.
 ```
@@ -528,68 +529,245 @@ Design: findings should look like cards in a Jira or Notion board — each findi
 
 ---
 
-## PROMPT 10 — Tab: IC Memo
+## PROMPT 10A — Tab: IC Memo (parte 1: interface visual)
+
+> Esta parte constrói **apenas a interface** da aba IC Memo (estados vazio, carregando, erro e memo pronto). A geração real via LLM vem no PROMPT 10B.
 
 ```
-In the Deal Details page, implement the IC Memo tab.
+In the Deal Details page, implement the IC Memo tab — VISUAL LAYER ONLY.
+Do NOT integrate any LLM provider in this prompt; that comes in the next prompt.
 
 Create a separate component: components/deals/ICMemoTab.tsx
-It receives deal: Deal as a prop (the full deal object, not just id) so the memo can reference deal data.
+It receives deal: Deal as a prop (the full deal object, not just id) so the memo view can reference deal data.
 
-Also load security and due diligence data inside this component to use in memo generation.
+Also load security and due diligence data inside this component (securityService.getSecurityByDealId,
+dueDiligenceService.getDueDiligenceByDealId) — the next prompt will send this context to the LLM,
+and the Key Risks section already needs the findings to render risk badges.
 
 States to manage:
-- existingMemo: ICMemo | null (loaded from memoService.getMemoByDealId)
+- memo: ICMemo | null (loaded from memoService.getMemoByDealId on mount)
+- isLoading: boolean (initial data fetch)
 - isGenerating: boolean
-- generatedContent: string | null
+- error: string | null
 
-Layout when NO memo exists yet:
-- Empty state card with:
-  - Icon (FileText from lucide-react)
-  - Title: "No IC Memo Generated"
-  - Subtitle: "Generate an Investment Committee memo based on deal data, securities, and diligence findings."
-  - Big primary button: "Generate IC Memo"
+Render four mutually exclusive states:
+
+1. LOADING (initial fetch)
+   Skeleton blocks in the shape of the memo card.
+
+2. EMPTY STATE (no memo yet)
+   - Icon (FileText from lucide-react)
+   - Title: "No IC Memo Generated"
+   - Subtitle: "Generate an Investment Committee memo based on deal data, securities, and diligence findings."
+   - Big primary button: "Generate IC Memo"
+
+3. GENERATING
+   - Spinner + "Generating memo from deal data..." text
+   - Secondary muted line: "This can take up to 30 seconds."
+   - The generate button uses the Button component's loading prop and is disabled while generating
+
+4. ERROR
+   - Card with AlertTriangle icon, the error message, and a "Try Again" button
+   - The error text comes from state — do not hardcode a message
 
 Layout when memo EXISTS:
-- Card header: "Investment Committee Memo" + date generated
-- Formatted memo content (rendered as sections with headings)
-- A subtle "Regenerate" button
+- Card header: "Investment Committee Memo" + generated date (formatted, e.g. "Generated on June 9, 2025 at 14:32")
+- Right of the header: subtle "Export to PDF" button (visual only, no behavior) and a "Regenerate" button
+- Below: the rendered memo content
 
---- GENERATE BEHAVIOR ---
+--- MEMO RENDERER ---
+Create components/deals/MemoContent.tsx that receives content: string and findings: Finding[].
 
-When "Generate IC Memo" is clicked:
-1. Set isGenerating = true
-2. Show loading state: spinner + "Generating memo from deal data..." text
-3. After 2 seconds (setTimeout to simulate LLM latency):
-   a. Build a realistic IC Memo string using data from the deal, security, and findings
-   b. Call memoService.generateMemo(dealId, content)
-   c. Set generatedContent and isGenerating = false
+The memo content is plain text / lightweight markdown with section headings written as "## Section Name".
+Parse it into sections and render:
+- Section headings: uppercase, small, semibold, letter-spaced (matching the app's section title style)
+- Body text: text-sm, generous line-height, paragraphs preserved
+- Lines starting with "-" or "*" render as bullet lists
+- For the "Key Risks" section, if a line mentions a finding title from the findings array, render that
+  line as a styled row with the finding's Risk Level badge (use the Badge component)
+- The whole memo sits in a white card with document-like padding and a max readable width
 
-The generated memo content should be DYNAMIC — it must actually use the deal's real data:
-- Company name, size, industry, sponsor, EBITDA, leverage
-- Security type, rate, maturity
-- Findings titles and risk levels
+--- GENERATE BEHAVIOR (TEMPORARY) ---
+For this prompt only, wire the "Generate IC Memo" / "Regenerate" buttons to a placeholder function:
 
-Build the memo as a structured string with these sections:
-- Investment Recommendation (1 sentence: Approve $XXm [type] to [Company])
-- Executive Summary (2–3 sentences using deal data)
-- Investment Thesis (2–3 bullet points)
-- Financial Overview (deal financials in a structured block)
-- Key Risks (from actual findings, grouped by risk level)
-- Mitigants (from finding.mitigation fields)
-- Recommendation (final paragraph)
+// TEMPORARY — replaced by the real LLM call in the next prompt.
+async function generatePlaceholderMemo(): Promise<string>
 
---- MEMO DISPLAY ---
-Render the memo with proper formatting:
-- Section headings: bold, slightly larger
-- Body text: readable, line-height generous
-- "Key Risks" section: show each finding as a styled row with its risk badge
-- The whole memo should be in a white card that looks like a real document
-- Add a subtle "Export to PDF" button (it doesn't need to function — just visual)
+It waits 1.5s and returns a short hardcoded memo string with the "## Section Name" heading format,
+covering: Investment Recommendation, Executive Summary, Investment Thesis, Financial Overview,
+Key Risks, Mitigants, Recommendation. Then it calls memoService.generateMemo(deal.id, content)
+and updates state so the memo view renders.
 
-Add a comment at the top of the component:
-// In production, this button would call POST /api/memos which calls an LLM provider (OpenAI/Anthropic).
-// The frontend-to-mock pattern here is a prototype simplification.
+Mark it clearly:
+// TODO(next prompt): replace generatePlaceholderMemo with POST /api/memos (real LLM call).
+
+Design: the memo should look like a real investment document — formal, legible, printable.
+```
+
+---
+
+## PROMPT 10B — Tab: IC Memo (parte 2: integração real com LLM)
+
+> Esta parte substitui o placeholder por uma **chamada real** a um provider de LLM (OpenAI, Anthropic ou Gemini) através de uma API route do Next.js, e persiste o memo gerado no JSON mockado.
+
+```
+Now replace the placeholder memo generation with a REAL LLM integration.
+
+The API key must NEVER reach the browser: the LLM call happens server-side in a Next.js Route Handler,
+and the client only talks to our own endpoint.
+
+--- 1. ENVIRONMENT VARIABLES ---
+
+Create .env.example (committed, no real values) and .env (same keys, empty values for me to fill):
+
+# Which provider to use: openai | anthropic | gemini
+LLM_PROVIDER=openai
+
+# OpenAI
+OPENAI_API_KEY=
+OPENAI_MODEL=gpt-4o-mini
+
+# Anthropic
+ANTHROPIC_API_KEY=
+ANTHROPIC_MODEL=claude-sonnet-4-20250514
+
+# Google Gemini
+GEMINI_API_KEY=
+GEMINI_MODEL=gemini-2.0-flash
+
+# Shared generation settings
+LLM_MAX_OUTPUT_TOKENS=2000
+LLM_TEMPERATURE=0.3
+
+Rules:
+- Never prefix these with NEXT_PUBLIC_ — that would expose the key in the client bundle.
+- .gitignore already ignores .env* — add an exception line so the template is committed:
+  !.env.example
+- Read every value with process.env inside server code only, and read it at request time
+  (not at module top level) so I can change .env without rebuilding.
+
+--- 2. LLM CLIENT ---
+
+Create lib/llm.ts — a provider-agnostic wrapper using plain fetch (do NOT add any SDK dependency).
+
+Export:
+- type LlmProvider = 'openai' | 'anthropic' | 'gemini'
+- class LlmConfigError extends Error   (thrown when the provider is unknown or the API key is missing)
+- class LlmRequestError extends Error  (thrown when the provider returns a non-2xx; include status + provider message)
+- async function generateText({ system, prompt }: { system: string; prompt: string }):
+    Promise<{ text: string; provider: LlmProvider; model: string }>
+
+generateText resolves the provider from LLM_PROVIDER (default 'openai'), validates that the matching
+API key exists, and calls the right endpoint:
+
+openai   → POST https://api.openai.com/v1/chat/completions
+           Headers: Authorization: Bearer ${OPENAI_API_KEY}, Content-Type: application/json
+           Body: { model, temperature, max_tokens, messages: [{ role: 'system', content: system },
+                   { role: 'user', content: prompt }] }
+           Text: data.choices[0].message.content
+
+anthropic → POST https://api.anthropic.com/v1/messages
+           Headers: x-api-key: ${ANTHROPIC_API_KEY}, anthropic-version: 2023-06-01, Content-Type: application/json
+           Body: { model, max_tokens, temperature, system, messages: [{ role: 'user', content: prompt }] }
+           Text: data.content[0].text
+
+gemini    → POST https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent
+           Headers: x-goog-api-key: ${GEMINI_API_KEY}, Content-Type: application/json
+           Body: { systemInstruction: { parts: [{ text: system }] },
+                   contents: [{ role: 'user', parts: [{ text: prompt }] }],
+                   generationConfig: { temperature, maxOutputTokens } }
+           Text: data.candidates[0].content.parts[0].text
+
+Also:
+- Use AbortSignal.timeout(60_000) on the fetch so a hanging provider doesn't hang the request.
+- Throw LlmConfigError with an actionable message, e.g.
+  "OPENAI_API_KEY is not set. Add it to .env (see .env.example) and restart the dev server."
+- Never log the API key.
+
+--- 3. MEMO PROMPT BUILDER ---
+
+Create lib/memoPrompt.ts exporting:
+- MEMO_SYSTEM_PROMPT: string — positions the model as a private credit investment professional writing
+  for an Investment Committee. It must instruct the model to:
+  - use ONLY the data provided (no invented figures, no placeholders like [TBD])
+  - write in the exact section format "## Section Name" followed by body text/bullets
+  - output these sections in order: Investment Recommendation, Executive Summary, Investment Thesis,
+    Financial Overview, Key Risks, Mitigants, Recommendation
+  - keep it 500–800 words, formal, plain text (no markdown tables, no code fences)
+  - reference each diligence finding by its exact title in Key Risks
+
+- buildMemoPrompt({ deal, security, dueDiligence }): string — serializes the real data into a readable
+  block: company name, industry, sponsor, owner, stage, deal size, revenue, EBITDA, leverage, risk score
+  and risk breakdown; security type, amount, rate, maturity, origination fee, covenants, collateral;
+  every finding with title, risk level, status, description, mitigation and owner.
+
+--- 4. API ROUTE ---
+
+Create app/api/memos/route.ts (Route Handler, App Router — not a pages/api file).
+
+export const runtime = 'nodejs'   // needs the filesystem and the provider SDK-free fetch
+
+POST — body: { dealId: string }
+1. Validate dealId is a non-empty string → 400 { error } if not.
+2. Load the deal, security and due diligence for that dealId from the mock-api JSON files
+   (import them directly here — this is server code, the "UI must not import JSON" rule applies to
+   components, not to the API layer). Deal not found → 404.
+3. Build the prompt and call generateText from lib/llm.ts.
+4. Persist the memo into mock-api/ic-memos.json with fs/promises:
+   - read the file, parse the array
+   - upsert by dealId (regenerating a memo replaces the existing entry, keeping its id)
+   - shape: { id, dealId, generatedAt, content, provider, model }
+   - write back with JSON.stringify(memos, null, 2) + trailing newline
+5. Return 200 with the ICMemo object.
+
+Error mapping:
+- LlmConfigError → 503 with the actionable message (so the UI can tell me to fill .env)
+- LlmRequestError → 502 with a message including the provider status
+- anything else → 500 with a generic message
+Always log the real error server-side with console.error.
+
+GET — optional convenience: /api/memos?dealId=xxx returns the stored memo or 404.
+
+Add a comment at the top of the file:
+// Server-side only: the LLM API key lives in process.env and never reaches the browser.
+
+--- 5. UPDATE types/index.ts ---
+
+Extend ICMemo with the provenance fields:
+  provider?: 'openai' | 'anthropic' | 'gemini'
+  model?: string
+
+--- 6. UPDATE services/memoService.ts ---
+
+Replace the mocked generateMemo with a real call to our own endpoint:
+
+- generateMemo(dealId: string): Promise<ICMemo>
+  POST /api/memos with JSON body { dealId }.
+  If the response is not ok, read the JSON body and throw new Error(body.error ?? 'Failed to generate memo')
+  so the UI can display the provider/config message.
+  Remove the old (dealId, content) signature and the in-memory push.
+
+- getMemoByDealId stays reading from the JSON import (fast, no round-trip), but add a comment noting
+  that after a generation the fresh memo comes from the POST response.
+
+Keep the JSDoc rule: components go through the service layer, never fetch the provider directly.
+
+--- 7. UPDATE components/deals/ICMemoTab.tsx ---
+
+- Delete generatePlaceholderMemo and its TODO comment.
+- handleGenerate now: setIsGenerating(true), setError(null) → await memoService.generateMemo(deal.id)
+  → set the returned memo → finally setIsGenerating(false).
+- On failure, put the thrown message into the error state so the existing error card shows it
+  (including the "add your API key to .env" case).
+- When a memo exists, show a small muted footer line with its provenance:
+  "Generated by {provider} · {model}".
+- Keep every visual state from the previous prompt unchanged.
+
+--- 8. VERIFY ---
+Report to me:
+- which env vars I need to fill to make it work
+- how to switch providers
+- confirm that mock-api/ic-memos.json is written after a successful generation
 ```
 
 ---
@@ -610,7 +788,7 @@ Write a professional 1–2 page system explanation document as if it were the te
 Describe the prototype:
 - A frontend-only deal management platform for private credit fund teams
 - Four core modules: Deal Pipeline, Securities Structuring, Due Diligence Tracking, IC Memo Generation
-- The IC Memo module assembles data from all prior modules to generate a structured investment recommendation
+- The IC Memo module assembles data from all prior modules and sends it to an LLM provider (OpenAI, Anthropic or Gemini) to generate a structured investment recommendation
 - The deal stage is visible at all times, giving the deal team a unified view of where each deal stands in the underwriting process
 
 ## 2. Architecture
@@ -618,18 +796,19 @@ Describe the prototype:
 Describe the architecture decisions:
 - Next.js App Router with TypeScript and Tailwind CSS
 - Service layer abstraction (dealService, securityService, dueDiligenceService, memoService) that sits between the UI and data sources
-- Today: services read from local JSON files in mock-api/
+- Today: read operations are served from local JSON files in mock-api/
 - Tomorrow: services can be swapped to call real REST endpoints (e.g. fetch('/api/deals')) without any changes to UI components
-- The IC Memo is generated client-side using assembled deal data in this prototype. In production, a backend would handle the LLM call to prevent API key exposure
+- The IC Memo is the exception and already follows the production shape: memoService calls POST /api/memos (a Next.js Route Handler), which builds the prompt from deal + security + diligence data, calls the configured LLM provider (OpenAI / Anthropic / Gemini) and persists the result. The API key lives in server-side environment variables and never reaches the browser
+- Provider selection is configuration, not code: LLM_PROVIDER plus the matching API key and model in .env
 - Draw a simple ASCII architecture diagram:
 
   [UI Components]
        ↓
   [Service Layer]
-       ↓ (today)          ↓ (future)
-  [mock-api/*.json]   [REST API / Backend]
-                               ↓
-                          [Database + LLM]
+       ↓ (reads today)     ↓ (memo generation today)   ↓ (future)
+  [mock-api/*.json]   [POST /api/memos → LLM]     [REST API / Backend]
+                               ↓                          ↓
+                       [mock-api/ic-memos.json]     [Database + LLM]
 
 ## 3. Data Model
 
@@ -646,20 +825,21 @@ Include a brief ERD in text format.
 
 Be honest and specific about what was simplified:
 - No authentication or authorization
-- No real backend or database — data is in-memory and resets on page reload
-- POST actions (create deal, add finding, generate memo) are mocked client-side
+- No real backend or database — deal, security and diligence data is in-memory and resets on page reload
+- Create deal and add finding are mocked client-side; only memo generation hits a real endpoint
+- Generated memos are persisted to mock-api/ic-memos.json on disk, which works for a single-instance demo but is not concurrency-safe and would be a database table in production
 - No update or delete operations (GET and POST only, to keep scope focused)
-- No real LLM integration — memo is assembled programmatically from deal data (but architecture is ready for a real LLM call)
+- The LLM call is unstreamed and unvalidated — the model returns free-form text that the UI parses by section heading, instead of structured/JSON output with a schema
+- No retry, rate-limit handling, cost tracking or caching around the LLM call
 - No document upload or financial model ingestion
 - No real-time collaboration between team members
-- Direct LLM access from frontend would expose API keys — this is a prototype simplification
 
 ## 5. What More We Would Do With Extra Time
 
 List concrete next steps, organized in priority order:
 1. Backend API layer (Node/Express or Next.js API routes) with PostgreSQL
 2. Authentication with role-based access (Analyst, Associate, MD, LP)
-3. Real LLM integration (OpenAI GPT-4 or Anthropic Claude) for IC Memo with structured output
+3. Harden the LLM layer: structured/JSON output with schema validation, streaming into the UI, retries with backoff, prompt versioning and cost/latency telemetry
 4. Update and delete operations with audit trail
 5. Document upload with OCR and AI extraction of financial model data
 6. Deal collaboration features (comments, @mentions, version history)
@@ -720,7 +900,11 @@ Review the entire application and apply these final polish improvements:
    - [ ] Clicking a deal navigates to /deals/[id]
    - [ ] All 4 tabs work on deal details page
    - [ ] "Add Finding" modal opens, submits, and new finding appears in list
-   - [ ] "Generate IC Memo" button shows loading then displays memo with real deal data
+   - [ ] "Generate IC Memo" calls POST /api/memos, shows the loading state, then displays the LLM-generated memo
+   - [ ] With no API key in .env, the IC Memo tab shows a readable error telling the user to fill .env (it does not crash)
+   - [ ] After a successful generation, the memo is written to mock-api/ic-memos.json and survives a page reload
+   - [ ] No API key or provider secret appears anywhere in client components or in the browser bundle
+   - [ ] .env.example exists and lists every required variable; .env is not committed
    - [ ] No TypeScript errors
    - [ ] No broken imports
 
@@ -742,7 +926,8 @@ Report any issues found and fix them.
 | 7 | Deal Details + Overview | app/deals/[id]/page.tsx + tab Overview |
 | 8 | Tab Securities | SecuritiesTab.tsx |
 | 9 | Tab Due Diligence | DueDiligenceTab.tsx + modal de findings |
-| 10 | Tab IC Memo | ICMemoTab.tsx com geração dinâmica |
+| 10A | Tab IC Memo (visual) | ICMemoTab.tsx + MemoContent.tsx (estados e renderização) |
+| 10B | Tab IC Memo (LLM real) | .env/.env.example, lib/llm.ts, lib/memoPrompt.ts, app/api/memos/route.ts |
 | 11 | Documentação | SYSTEM_EXPLANATION.md |
 | 12 | Polimento Final | Loading states, responsividade, consistência |
 
