@@ -12,6 +12,7 @@ import Tabs, { type TabItem } from '@/components/ui/Tabs';
 import OverviewTab from '@/components/deals/OverviewTab';
 import SecuritiesTab from '@/components/deals/SecuritiesTab';
 import DueDiligenceTab from '@/components/deals/DueDiligenceTab';
+import ICMemoTab from '@/components/deals/ICMemoTab';
 import { getDealById } from '@/services/dealService';
 import type { Deal } from '@/types';
 import { formatMillions, getInitials, stageBadgeVariant } from '@/lib/utils';
@@ -29,15 +30,6 @@ function KpiChip({ label, value }: { label: string; value: string }) {
       <span className='text-xs uppercase tracking-wider text-slate-500'>{label}</span>
       <span className='text-sm font-semibold tabular-nums text-slate-900'>{value}</span>
     </div>
-  );
-}
-
-function ComingSoon({ label }: { label: string }) {
-  return (
-    <Card className='flex flex-col items-center gap-1 py-16 text-center'>
-      <p className='text-sm font-medium text-slate-500'>{label} is coming soon</p>
-      <p className='text-xs text-slate-400'>This tab will be implemented in a future step.</p>
-    </Card>
   );
 }
 
@@ -128,7 +120,7 @@ export default function DealDetailsPage() {
         {activeTab === 'overview' && <OverviewTab deal={deal} />}
         {activeTab === 'securities' && <SecuritiesTab dealId={deal.id} />}
         {activeTab === 'diligence' && <DueDiligenceTab dealId={deal.id} />}
-        {activeTab === 'memo' && <ComingSoon label='IC Memo' />}
+        {activeTab === 'memo' && <ICMemoTab deal={deal} />}
       </div>
     </div>
   );

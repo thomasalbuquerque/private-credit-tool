@@ -23,6 +23,22 @@ export function formatLongDate(date: Date | string): string {
   });
 }
 
+/** Formats an ISO date or Date object as "June 9, 2025 at 14:32" */
+export function formatDateTime(date: Date | string): string {
+  const d = typeof date === 'string' ? new Date(date) : date;
+  const datePart = d.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+  const timePart = d.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+  return `${datePart} at ${timePart}`;
+}
+
 /** Returns a human-readable relative date string from an ISO date, e.g. "2 days ago", "Today" */
 export function relativeDate(isoDate: string, now: Date = new Date()): string {
   const d = new Date(isoDate);
