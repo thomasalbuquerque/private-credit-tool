@@ -3,22 +3,23 @@ import type { ICMemo } from '@/types';
 
 const icMemos = icMemosData as ICMemo[];
 
+// Reads from the static JSON snapshot for a fast initial load. After a successful
+// generateMemo() call, the freshest memo is the one returned directly by the POST response.
 export function getMemoByDealId(dealId: string): Promise<ICMemo | undefined> {
   return Promise.resolve(icMemos.find((memo) => memo.dealId === dealId));
 }
 
-export function generateMemo(dealId: string, content: string): Promise<ICMemo> {
-  const newMemo: ICMemo = {
-    id: `memo-${Math.random().toString(36).slice(2, 9)}`,
-    dealId,
-    generatedAt: new Date().toISOString(),
-    content,
-  };
+export async function generateMemo(dealId: string): Promise<ICMemo> {
+  const response = await fetch('/api/memos', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ dealId }),
+  });
 
-  icMemos.push(newMemo);
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({}));
+    throw new Error(body.error ?? 'Failed to generate memo');
+  }
 
-  console.log('Generating memo:', newMemo);
-  // TODO: in the future, we will use a real backend to generate a memo, so we will replace this with a POST /api/memos
-
-  return Promise.resolve(newMemo);
+  return response.json();
 }

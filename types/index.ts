@@ -89,4 +89,6 @@ export interface ICMemo {
   dealId: string;
   generatedAt: string;
   content: string;
+  provider?: 'openai' | 'anthropic' | 'gemini';
+  model?: string;
 }
