@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import type { ReactNode } from "react";
-import { useEffect } from "react";
-import { X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import type { ReactNode } from 'react';
+import { useEffect } from 'react';
+import { X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface ModalProps {
   open: boolean;
@@ -14,27 +14,20 @@ interface ModalProps {
   className?: string;
 }
 
-export default function Modal({
-  open,
-  onClose,
-  title,
-  children,
-  footer,
-  className,
-}: ModalProps) {
+export default function Modal({ open, onClose, title, children, footer, className }: ModalProps) {
   useEffect(() => {
     if (!open) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === 'Escape') onClose();
     };
 
-    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown);
     const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    document.body.style.overflow = 'hidden';
 
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = previousOverflow;
     };
   }, [open, onClose]);
@@ -42,39 +35,29 @@ export default function Modal({
   if (!open) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 px-4"
-      onClick={onClose}
-    >
+    <div className='fixed inset-0 z-50 flex items-center justify-center bg-slate-950/70 px-4' onClick={onClose}>
       <div
-        role="dialog"
-        aria-modal="true"
+        role='dialog'
+        aria-modal='true'
         aria-label={title}
         onClick={(e) => e.stopPropagation()}
-        className={cn(
-          "max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl bg-white shadow-xl",
-          className
-        )}
+        className={cn('max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-xl border border-slate-600 bg-slate-800 shadow-xl', className)}
       >
-        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
-          <h2 className="text-lg font-semibold text-slate-900">{title}</h2>
+        <div className='flex items-center justify-between border-b border-slate-700 px-6 py-4'>
+          <h2 className='text-lg font-semibold text-slate-100'>{title}</h2>
           <button
-            type="button"
+            type='button'
             onClick={onClose}
-            aria-label="Close"
-            className="rounded-lg p-1 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+            aria-label='Close'
+            className='rounded-lg p-1 text-slate-200 transition-colors hover:bg-slate-700/60 hover:text-slate-200'
           >
-            <X className="h-5 w-5" />
+            <X className='h-5 w-5' />
           </button>
         </div>
 
-        <div className="px-6 py-5">{children}</div>
+        <div className='px-6 py-5'>{children}</div>
 
-        {footer ? (
-          <div className="flex items-center justify-end gap-3 border-t border-slate-100 px-6 py-4">
-            {footer}
-          </div>
-        ) : null}
+        {footer ? <div className='flex items-center justify-end gap-3 border-t border-slate-700 px-6 py-4'>{footer}</div> : null}
       </div>
     </div>
   );

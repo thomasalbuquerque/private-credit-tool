@@ -10,9 +10,10 @@ import Button from '@/components/ui/Button';
 import Modal from '@/components/ui/Modal';
 import Toast from '@/components/ui/Toast';
 import Skeleton from '@/components/ui/Skeleton';
+import EmptyState from '@/components/ui/EmptyState';
 import { getDeals, createDeal } from '@/services/dealService';
 import type { Deal, DealStage } from '@/types';
-import { cn, formatMillions, getInitials, riskColor, stageBadgeVariant } from '@/lib/utils';
+import { cn, formatMillions, getInitials, inputClass, riskColor, stageBadgeVariant } from '@/lib/utils';
 
 const STAGE_OPTIONS: DealStage[] = ['Screening', 'Due Diligence', 'IC Review', 'Closed'];
 
@@ -42,7 +43,7 @@ function RiskBar({ score }: { score: number }) {
   const { bar, text } = riskColor(score);
   return (
     <div className='flex items-center gap-2'>
-      <div className='h-1.5 w-16 overflow-hidden rounded-full bg-slate-100'>
+      <div className='h-1.5 w-16 overflow-hidden rounded-full bg-slate-700'>
         <div className={cn('h-full rounded-full', bar)} style={{ width: `${score}%` }} />
       </div>
       <span className={cn('text-xs font-medium tabular-nums', text)}>{score}/100</span>
@@ -146,10 +147,8 @@ export default function DealsPage() {
       {/* ── Header ── */}
       <div className='mb-6 flex items-start justify-between gap-4'>
         <div>
-          <h1 className='text-2xl font-semibold text-slate-900'>Deal Pipeline</h1>
-          <p className='mt-1 text-sm text-slate-500'>
-            {isLoading ? 'Loading deals…' : `${activeDealsCount} active deals across ${stageCount} stages`}
-          </p>
+          <h1 className='text-2xl font-semibold text-slate-100'>Deal Pipeline</h1>
+          <p className='mt-1 text-sm text-slate-500'>{isLoading ? 'Loading deals…' : `${activeDealsCount} active deals across ${stageCount} stages`}</p>
         </div>
         <Button onClick={() => setIsModalOpen(true)}>
           <Plus className='h-4 w-4' />
@@ -160,21 +159,17 @@ export default function DealsPage() {
       {/* ── Filters ── */}
       <div className='mb-4 flex flex-col gap-3 sm:flex-row sm:items-center'>
         <div className='relative flex-1 sm:max-w-xs'>
-          <Search className='pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400' />
+          <Search className='pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500' />
           <input
             type='text'
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder='Search by company name…'
-            className='w-full rounded-lg border border-slate-300 bg-white py-2 pl-9 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400'
+            className={cn(inputClass, 'py-2 pl-9 pr-3')}
           />
         </div>
 
-        <select
-          value={stageFilter}
-          onChange={(e) => setStageFilter(e.target.value as 'All' | DealStage)}
-          className='rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400'
-        >
+        <select value={stageFilter} onChange={(e) => setStageFilter(e.target.value as 'All' | DealStage)} className={cn(inputClass, 'sm:w-auto')}>
           <option value='All'>All Stages</option>
           {STAGE_OPTIONS.map((stage) => (
             <option key={stage} value={stage}>
@@ -183,11 +178,7 @@ export default function DealsPage() {
           ))}
         </select>
 
-        <select
-          value={industryFilter}
-          onChange={(e) => setIndustryFilter(e.target.value)}
-          className='rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400'
-        >
+        <select value={industryFilter} onChange={(e) => setIndustryFilter(e.target.value)} className={cn(inputClass, 'sm:w-auto')}>
           <option value='All'>All Industries</option>
           {industries.map((industry) => (
             <option key={industry} value={industry}>
@@ -206,24 +197,24 @@ export default function DealsPage() {
             ))}
           </div>
         ) : filteredDeals.length === 0 ? (
-          <div className='flex flex-col items-center gap-2 py-12 text-center'>
-            <Inbox className='h-8 w-8 text-slate-300' />
-            <p className='text-sm font-medium text-slate-500'>No deals match your filters</p>
-            <p className='text-xs text-slate-400'>Try adjusting your search or filter selections.</p>
-          </div>
+          <EmptyState
+            icon={<Inbox className='h-8 w-8 text-slate-500' />}
+            title='No deals match your filters'
+            description='Try adjusting your search or filter selections.'
+          />
         ) : (
           <div className='-m-5 overflow-x-auto'>
             <table className='w-full min-w-225 text-sm'>
               <thead>
-                <tr className='border-b border-slate-100 bg-slate-50/50'>
-                  <th className='px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500'>Company</th>
-                  <th className='px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500'>Industry</th>
-                  <th className='px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500'>Deal Size</th>
-                  <th className='px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500'>Leverage</th>
-                  <th className='px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500'>Stage</th>
-                  <th className='px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500'>Owner</th>
-                  <th className='px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500'>Risk Score</th>
-                  <th className='px-3 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-500'>Actions</th>
+                <tr className='border-b border-slate-700 bg-slate-700/40'>
+                  <th className='px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-200'>Company</th>
+                  <th className='px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-200'>Industry</th>
+                  <th className='px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-200'>Deal Size</th>
+                  <th className='px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-200'>Leverage</th>
+                  <th className='px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-200'>Stage</th>
+                  <th className='px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-200'>Owner</th>
+                  <th className='px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-200'>Risk Score</th>
+                  <th className='px-3 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-200'>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -235,27 +226,27 @@ export default function DealsPage() {
                     onClick={() => handleRowNavigate(deal.id)}
                     onKeyDown={(e) => handleRowKeyDown(e, deal.id)}
                     className={cn(
-                      'cursor-pointer transition-colors hover:bg-slate-50 focus:bg-slate-50 focus:outline-none',
-                      i % 2 === 1 && 'bg-slate-50/30',
-                      i < filteredDeals.length - 1 && 'border-b border-slate-100'
+                      'cursor-pointer transition-colors hover:bg-slate-700/50 focus:bg-slate-700/50 focus:outline-none',
+                      i % 2 === 1 && 'bg-slate-700/20',
+                      i < filteredDeals.length - 1 && 'border-b border-slate-700',
                     )}
                   >
                     <td className='px-5 py-3.5'>
-                      <p className='font-medium text-slate-900 leading-tight'>{deal.companyName}</p>
-                      <span className='mt-0.5 inline-block rounded bg-slate-100 px-1.5 py-0.5 text-[11px] text-slate-500'>{deal.industry}</span>
+                      <p className='font-medium text-slate-100 leading-tight'>{deal.companyName}</p>
+                      <span className='mt-0.5 inline-block rounded bg-slate-700 px-1.5 py-0.5 text-[11px] text-slate-200'>{deal.industry}</span>
                     </td>
-                    <td className='px-3 py-3.5 text-slate-600'>{deal.industry}</td>
-                    <td className='px-3 py-3.5 tabular-nums text-slate-700'>{formatMillions(deal.dealSize)}</td>
-                    <td className='px-3 py-3.5 tabular-nums text-slate-700'>{deal.leverage.toFixed(1)}x EBITDA</td>
+                    <td className='px-3 py-3.5 text-slate-200'>{deal.industry}</td>
+                    <td className='px-3 py-3.5 tabular-nums text-slate-300'>{formatMillions(deal.dealSize)}</td>
+                    <td className='px-3 py-3.5 tabular-nums text-slate-300'>{deal.leverage.toFixed(1)}x EBITDA</td>
                     <td className='px-3 py-3.5'>
                       <Badge variant={stageBadgeVariant(deal.stage)}>{deal.stage}</Badge>
                     </td>
                     <td className='px-3 py-3.5'>
                       <div className='flex items-center gap-2'>
-                        <span className='flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-50 text-[11px] font-semibold text-indigo-600'>
+                        <span className='flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-indigo-500/20 text-[11px] font-semibold text-indigo-300'>
                           {getInitials(deal.owner)}
                         </span>
-                        <span className='text-slate-700'>{deal.owner}</span>
+                        <span className='text-slate-300'>{deal.owner}</span>
                       </div>
                     </td>
                     <td className='px-3 py-3.5'>
@@ -264,7 +255,7 @@ export default function DealsPage() {
                     <td className='px-3 py-3.5 text-right'>
                       <span
                         onClick={(e) => e.stopPropagation()}
-                        className='inline-flex items-center gap-1 text-xs font-medium text-indigo-600 hover:text-indigo-700'
+                        className='inline-flex items-center gap-1 text-xs font-medium text-indigo-400 hover:text-indigo-300'
                       >
                         View <ArrowRight className='h-3.5 w-3.5' />
                       </span>
@@ -295,23 +286,19 @@ export default function DealsPage() {
       >
         <form onSubmit={handleCreateDeal} className='space-y-4'>
           <div>
-            <label className='mb-1 block text-xs font-medium text-slate-600'>Company Name</label>
+            <label className='mb-1 block text-xs font-medium text-slate-200'>Company Name</label>
             <input
               type='text'
               required
               value={form.companyName}
               onChange={(e) => setForm((f) => ({ ...f, companyName: e.target.value }))}
-              className='w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400'
+              className={inputClass}
             />
           </div>
 
           <div>
-            <label className='mb-1 block text-xs font-medium text-slate-600'>Industry</label>
-            <select
-              value={form.industry}
-              onChange={(e) => setForm((f) => ({ ...f, industry: e.target.value }))}
-              className='w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400'
-            >
+            <label className='mb-1 block text-xs font-medium text-slate-200'>Industry</label>
+            <select value={form.industry} onChange={(e) => setForm((f) => ({ ...f, industry: e.target.value }))} className={inputClass}>
               {INDUSTRY_OPTIONS.map((industry) => (
                 <option key={industry} value={industry}>
                   {industry}
@@ -322,57 +309,41 @@ export default function DealsPage() {
 
           <div className='grid grid-cols-3 gap-3'>
             <div>
-              <label className='mb-1 block text-xs font-medium text-slate-600'>Deal Size ($M)</label>
+              <label className='mb-1 block text-xs font-medium text-slate-200'>Deal Size ($M)</label>
               <input
                 type='number'
                 required
                 min={0}
                 value={form.dealSize}
                 onChange={(e) => setForm((f) => ({ ...f, dealSize: e.target.value }))}
-                className='w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400'
+                className={inputClass}
               />
             </div>
             <div>
-              <label className='mb-1 block text-xs font-medium text-slate-600'>Revenue ($M)</label>
-              <input
-                type='number'
-                min={0}
-                value={form.revenue}
-                onChange={(e) => setForm((f) => ({ ...f, revenue: e.target.value }))}
-                className='w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400'
-              />
+              <label className='mb-1 block text-xs font-medium text-slate-200'>Revenue ($M)</label>
+              <input type='number' min={0} value={form.revenue} onChange={(e) => setForm((f) => ({ ...f, revenue: e.target.value }))} className={inputClass} />
             </div>
             <div>
-              <label className='mb-1 block text-xs font-medium text-slate-600'>EBITDA ($M)</label>
+              <label className='mb-1 block text-xs font-medium text-slate-200'>EBITDA ($M)</label>
               <input
                 type='number'
                 required
                 min={0}
                 value={form.ebitda}
                 onChange={(e) => setForm((f) => ({ ...f, ebitda: e.target.value }))}
-                className='w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400'
+                className={inputClass}
               />
             </div>
           </div>
 
           <div className='grid grid-cols-2 gap-3'>
             <div>
-              <label className='mb-1 block text-xs font-medium text-slate-600'>Sponsor</label>
-              <input
-                type='text'
-                value={form.sponsor}
-                onChange={(e) => setForm((f) => ({ ...f, sponsor: e.target.value }))}
-                className='w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400'
-              />
+              <label className='mb-1 block text-xs font-medium text-slate-200'>Sponsor</label>
+              <input type='text' value={form.sponsor} onChange={(e) => setForm((f) => ({ ...f, sponsor: e.target.value }))} className={inputClass} />
             </div>
             <div>
-              <label className='mb-1 block text-xs font-medium text-slate-600'>Owner</label>
-              <input
-                type='text'
-                value={form.owner}
-                onChange={(e) => setForm((f) => ({ ...f, owner: e.target.value }))}
-                className='w-full rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400'
-              />
+              <label className='mb-1 block text-xs font-medium text-slate-200'>Owner</label>
+              <input type='text' value={form.owner} onChange={(e) => setForm((f) => ({ ...f, owner: e.target.value }))} className={inputClass} />
             </div>
           </div>
         </form>

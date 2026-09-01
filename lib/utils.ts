@@ -76,10 +76,14 @@ export function getInitials(name: string): string {
 }
 
 export function riskColor(score: number): { bar: string; text: string } {
-  if (score >= 70) return { bar: 'bg-emerald-500', text: 'text-emerald-700' };
-  if (score >= 40) return { bar: 'bg-amber-500', text: 'text-amber-700' };
-  return { bar: 'bg-red-500', text: 'text-red-700' };
+  if (score >= 70) return { bar: 'bg-emerald-500', text: 'text-emerald-400' };
+  if (score >= 40) return { bar: 'bg-amber-500', text: 'text-amber-400' };
+  return { bar: 'bg-red-500', text: 'text-red-400' };
 }
+
+/** Shared dark-theme classes for text inputs, selects, and textareas */
+export const inputClass =
+  'w-full rounded-lg border border-slate-600 bg-slate-700 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:border-indigo-400 focus:outline-none focus:ring-1 focus:ring-indigo-400';
 
 export function riskStatusColor(status: RiskStatus): string {
   const map: Record<RiskStatus, string> = {

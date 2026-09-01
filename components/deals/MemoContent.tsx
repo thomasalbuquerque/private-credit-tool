@@ -88,18 +88,18 @@ function KeyRisksSection({ lines, findings }: { lines: string[]; findings: Findi
             <div
               key={i}
               className={cn(
-                'flex items-center justify-between gap-3 rounded-lg border border-slate-200 border-l-4 bg-slate-50 px-3 py-2',
-                riskLevelAccent(finding.riskLevel)
+                'flex items-center justify-between gap-3 rounded-lg border border-slate-600 border-l-4 bg-slate-700/40 px-3 py-2',
+                riskLevelAccent(finding.riskLevel),
               )}
             >
-              <span className='text-sm leading-relaxed text-slate-700'>{text}</span>
+              <span className='text-sm leading-relaxed text-slate-300'>{text}</span>
               <Badge variant={riskLevelBadgeVariant(finding.riskLevel)}>{finding.riskLevel} Risk</Badge>
             </div>
           );
         }
 
         return (
-          <p key={i} className='text-sm leading-relaxed text-slate-700'>
+          <p key={i} className='text-sm leading-relaxed text-slate-300'>
             {text}
           </p>
         );
@@ -112,15 +112,11 @@ export default function MemoContent({ content, findings }: MemoContentProps) {
   const sections = parseSections(content);
 
   return (
-    <div className='mx-auto max-w-3xl rounded-xl border border-slate-200 bg-white px-8 py-10 shadow-sm'>
+    <div className='mx-auto max-w-3xl rounded-xl border border-slate-600 bg-slate-800 px-8 py-10 shadow-sm'>
       <div className='space-y-8'>
         {sections.map((section, i) => (
           <div key={i}>
-            {section.heading && (
-              <h3 className='mb-3 text-sm font-semibold uppercase tracking-wider text-slate-500'>
-                {section.heading}
-              </h3>
-            )}
+            {section.heading && <h3 className='mb-3 text-sm font-semibold uppercase tracking-wider text-slate-200'>{section.heading}</h3>}
 
             {section.heading === 'Key Risks' ? (
               <KeyRisksSection lines={section.lines} findings={findings} />
@@ -128,16 +124,16 @@ export default function MemoContent({ content, findings }: MemoContentProps) {
               <div className='space-y-3'>
                 {buildBlocks(section.lines).map((block, j) =>
                   block.type === 'list' ? (
-                    <ul key={j} className='list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-slate-700'>
+                    <ul key={j} className='list-disc space-y-1.5 pl-5 text-sm leading-relaxed text-slate-300'>
                       {block.items.map((item, k) => (
                         <li key={k}>{item}</li>
                       ))}
                     </ul>
                   ) : (
-                    <p key={j} className='text-sm leading-relaxed text-slate-700'>
+                    <p key={j} className='text-sm leading-relaxed text-slate-300'>
                       {block.text}
                     </p>
-                  )
+                  ),
                 )}
               </div>
             )}

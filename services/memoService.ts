@@ -1,12 +1,20 @@
-import icMemosData from '@/mock-api/ic-memos.json';
 import type { ICMemo } from '@/types';
 
-const icMemos = icMemosData as ICMemo[];
+// Reads via the API route (backed by fs) rather than a static import, so a memo
+// generated in a previous session is still returned after a full page reload.
+export async function getMemoByDealId(dealId: string): Promise<ICMemo | undefined> {
+  const response = await fetch(`/api/memos?dealId=${encodeURIComponent(dealId)}`);
 
-// Reads from the static JSON snapshot for a fast initial load. After a successful
-// generateMemo() call, the freshest memo is the one returned directly by the POST response.
-export function getMemoByDealId(dealId: string): Promise<ICMemo | undefined> {
-  return Promise.resolve(icMemos.find((memo) => memo.dealId === dealId));
+  if (response.status === 404) {
+    return undefined;
+  }
+
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({}));
+    throw new Error(body.error ?? 'Failed to load memo');
+  }
+
+  return response.json();
 }
 
 export async function generateMemo(dealId: string): Promise<ICMemo> {

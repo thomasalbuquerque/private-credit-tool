@@ -25,9 +25,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full bg-slate-50 text-slate-900">
+      <body className="min-h-full bg-slate-800 text-slate-300">
         <Sidebar />
-        <main className="min-h-screen md:pl-60">{children}</main>
+        <main className="min-h-screen pt-14 md:pl-60 md:pt-0">{children}</main>
       </body>
     </html>
   );

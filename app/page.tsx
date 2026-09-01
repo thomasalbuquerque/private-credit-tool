@@ -2,12 +2,13 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { Briefcase, DollarSign, BarChart3, ClipboardCheck } from 'lucide-react';
+import { Briefcase, DollarSign, BarChart3, ClipboardCheck, Inbox } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
 import Card from '@/components/ui/Card';
 import Badge from '@/components/ui/Badge';
 import Skeleton from '@/components/ui/Skeleton';
+import EmptyState from '@/components/ui/EmptyState';
 import { getDeals } from '@/services/dealService';
 import type { Deal } from '@/types';
 import { cn, formatMillions, formatLongDate, relativeDate, stageBadgeVariant } from '@/lib/utils';
@@ -26,8 +27,8 @@ function KpiCard({ icon, label, value, trend, iconBg }: KpiCardProps) {
       <div className='flex items-start justify-between gap-3'>
         <div className={cn('flex h-10 w-10 shrink-0 items-center justify-center rounded-lg', iconBg)}>{icon}</div>
         <div className='min-w-0 flex-1 text-right'>
-          <p className='text-xs font-medium uppercase tracking-wider text-slate-500'>{label}</p>
-          <p className='mt-1 text-2xl font-semibold tabular-nums text-slate-900'>{value}</p>
+          <p className='text-xs font-medium uppercase tracking-wider text-slate-200'>{label}</p>
+          <p className='mt-1 text-2xl font-semibold tabular-nums text-slate-100'>{value}</p>
           <p className='mt-0.5 text-xs text-slate-400'>{trend}</p>
         </div>
       </div>
@@ -44,8 +45,8 @@ interface PipelineBoxProps {
 
 function PipelineBox({ stage, count, borderColor, textColor }: PipelineBoxProps) {
   return (
-    <div className={cn('flex flex-col gap-1 rounded-xl border border-slate-200 bg-white px-4 py-4 shadow-sm border-l-4', borderColor)}>
-      <span className='text-xs font-semibold uppercase tracking-wider text-slate-500'>{stage}</span>
+    <div className={cn('flex flex-col gap-1 rounded-xl border border-slate-600 bg-slate-800 px-4 py-4 shadow-sm border-l-4', borderColor)}>
+      <span className='text-xs font-semibold uppercase tracking-wider text-slate-200'>{stage}</span>
       <span className={cn('text-3xl font-bold tabular-nums', textColor)}>{count}</span>
       <span className='text-xs text-slate-400'>{count === 1 ? 'deal' : 'deals'}</span>
     </div>
@@ -63,14 +64,14 @@ function ActivityRow({ action, company, relDate, isLast }: ActivityRowProps) {
   return (
     <div className='relative flex gap-3'>
       {/* vertical line */}
-      {!isLast && <span className='absolute left-1.75 top-5 h-full w-px bg-slate-100' />}
-      <span className='relative mt-1 h-3.5 w-3.5 shrink-0 rounded-full border-2 border-indigo-400 bg-white' />
+      {!isLast && <span className='absolute left-1.75 top-5 h-full w-px bg-slate-700' />}
+      <span className='relative mt-1 h-3.5 w-3.5 shrink-0 rounded-full border-2 border-indigo-400 bg-slate-800' />
       <div className='min-w-0 pb-5'>
-        <p className='text-sm text-slate-700 leading-snug'>
+        <p className='text-sm text-slate-300 leading-snug'>
           {action}
-          <span className='ml-1 text-xs font-medium text-slate-400'>· {company}</span>
+          <span className='ml-1 text-xs font-medium text-slate-500'>· {company}</span>
         </p>
-        <p className='mt-0.5 text-xs text-slate-400'>{relDate}</p>
+        <p className='mt-0.5 text-xs text-slate-500'>{relDate}</p>
       </div>
     </div>
   );
@@ -158,17 +159,17 @@ export default function DashboardPage() {
   // ── Stage pipeline style map ──────────────────────────────────────────────
 
   const pipelineStyle: Record<string, { borderColor: string; textColor: string }> = {
-    Screening: { borderColor: 'border-l-blue-500', textColor: 'text-blue-600' },
-    'Due Diligence': { borderColor: 'border-l-amber-500', textColor: 'text-amber-600' },
-    'IC Review': { borderColor: 'border-l-purple-500', textColor: 'text-purple-600' },
-    Closed: { borderColor: 'border-l-green-500', textColor: 'text-green-600' },
+    Screening: { borderColor: 'border-l-blue-500', textColor: 'text-blue-400' },
+    'Due Diligence': { borderColor: 'border-l-amber-500', textColor: 'text-amber-400' },
+    'IC Review': { borderColor: 'border-l-purple-500', textColor: 'text-purple-400' },
+    Closed: { borderColor: 'border-l-emerald-500', textColor: 'text-emerald-400' },
   };
 
   return (
     <div className='px-6 py-8 lg:px-10'>
       {/* ── Header ── */}
       <div className='mb-8'>
-        <h1 className='text-2xl font-semibold text-slate-900'>Underwriting Dashboard</h1>
+        <h1 className='text-2xl font-semibold text-slate-100'>Underwriting Dashboard</h1>
         <p className='mt-1 text-sm text-slate-500'>{now ? formatLongDate(now) : ''}</p>
       </div>
 
@@ -184,29 +185,29 @@ export default function DashboardPage() {
         ) : (
           <>
             <KpiCard
-              icon={<Briefcase className='h-5 w-5 text-indigo-600' />}
-              iconBg='bg-indigo-50'
+              icon={<Briefcase className='h-5 w-5 text-indigo-400' />}
+              iconBg='bg-indigo-500/15'
               label='Active Deals'
               value={String(kpis.activeDeals)}
               trend='Excluding closed'
             />
             <KpiCard
-              icon={<DollarSign className='h-5 w-5 text-emerald-600' />}
-              iconBg='bg-emerald-50'
+              icon={<DollarSign className='h-5 w-5 text-emerald-400' />}
+              iconBg='bg-emerald-500/15'
               label='Total Committed'
               value={formatMillions(kpis.totalCommitted)}
               trend='Across all deals'
             />
             <KpiCard
-              icon={<BarChart3 className='h-5 w-5 text-sky-600' />}
-              iconBg='bg-sky-50'
+              icon={<BarChart3 className='h-5 w-5 text-sky-400' />}
+              iconBg='bg-sky-500/15'
               label='Avg Deal Size'
               value={formatMillions(kpis.avgDealSize)}
               trend='Portfolio average'
             />
             <KpiCard
-              icon={<ClipboardCheck className='h-5 w-5 text-purple-600' />}
-              iconBg='bg-purple-50'
+              icon={<ClipboardCheck className='h-5 w-5 text-purple-400' />}
+              iconBg='bg-purple-500/15'
               label='IC Review'
               value={String(kpis.icReviewCount)}
               trend='Pending committee'
@@ -217,14 +218,14 @@ export default function DashboardPage() {
 
       {/* ── Pipeline Summary ── */}
       <div className='mb-6'>
-        <h2 className='mb-3 text-sm font-semibold uppercase tracking-wider text-slate-500'>Pipeline Summary</h2>
+        <h2 className='mb-3 text-sm font-semibold uppercase tracking-wider text-slate-200'>Pipeline Summary</h2>
         <div className='grid grid-cols-2 gap-4 lg:grid-cols-4'>
           {isLoading
             ? Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className='h-24' />)
             : pipelineCounts.map(({ stage, count }) => {
                 const style = pipelineStyle[stage] ?? {
-                  borderColor: 'border-l-slate-400',
-                  textColor: 'text-slate-700',
+                  borderColor: 'border-l-slate-500',
+                  textColor: 'text-slate-300',
                 };
                 return <PipelineBox key={stage} stage={stage} count={count} borderColor={style.borderColor} textColor={style.textColor} />;
               })}
@@ -252,8 +253,12 @@ export default function DashboardPage() {
                       contentStyle={{
                         fontSize: 12,
                         borderRadius: 8,
-                        border: '1px solid #e2e8f0',
+                        background: '#1e293b',
+                        border: '1px solid #475569',
+                        color: '#e2e8f0',
                       }}
+                      labelStyle={{ color: '#e2e8f0' }}
+                      itemStyle={{ color: '#e2e8f0' }}
                     />
                   </PieChart>
                 </ResponsiveContainer>
@@ -261,7 +266,7 @@ export default function DashboardPage() {
                 <ul className='mt-2 space-y-1.5'>
                   {riskData.map(({ name, value }) => (
                     <li key={name} className='flex items-center justify-between'>
-                      <span className='flex items-center gap-2 text-sm text-slate-600'>
+                      <span className='flex items-center gap-2 text-sm text-slate-300'>
                         <span
                           className='inline-block h-2.5 w-2.5 rounded-full'
                           style={{
@@ -270,7 +275,7 @@ export default function DashboardPage() {
                         />
                         {name}
                       </span>
-                      <span className='text-sm font-medium tabular-nums text-slate-900'>{value}</span>
+                      <span className='text-sm font-medium tabular-nums text-slate-100'>{value}</span>
                     </li>
                   ))}
                 </ul>
@@ -285,7 +290,7 @@ export default function DashboardPage() {
             {isLoading ? (
               <Skeleton className='h-64' />
             ) : recentActivity.length === 0 ? (
-              <p className='text-sm text-slate-400'>No recent activity.</p>
+              <EmptyState icon={<Inbox className='h-8 w-8 text-slate-500' />} title='No recent activity' />
             ) : (
               <div className='relative'>
                 {recentActivity.map((item, i) => (
@@ -311,20 +316,20 @@ export default function DashboardPage() {
               <div className='-mx-5 -mt-5'>
                 <table className='w-full text-sm'>
                   <thead>
-                    <tr className='border-b border-slate-100'>
-                      <th className='px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500'>Company</th>
-                      <th className='hidden px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500 sm:table-cell'>Size</th>
-                      <th className='px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-500'>Stage</th>
+                    <tr className='border-b border-slate-700'>
+                      <th className='px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-200'>Company</th>
+                      <th className='hidden px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-200 sm:table-cell'>Size</th>
+                      <th className='px-3 py-3 text-left text-xs font-semibold uppercase tracking-wider text-slate-200'>Stage</th>
                     </tr>
                   </thead>
                   <tbody>
                     {tableDeals.map((deal, i) => (
-                      <tr key={deal.id} className={cn('transition-colors hover:bg-slate-50', i < tableDeals.length - 1 && 'border-b border-slate-100')}>
+                      <tr key={deal.id} className={cn('transition-colors hover:bg-slate-700/50', i < tableDeals.length - 1 && 'border-b border-slate-700')}>
                         <td className='px-5 py-3'>
-                          <p className='font-medium text-slate-900 leading-tight'>{deal.companyName}</p>
-                          <p className='text-xs text-slate-400'>{deal.industry}</p>
+                          <p className='font-medium text-slate-100 leading-tight'>{deal.companyName}</p>
+                          <p className='text-xs text-slate-500'>{deal.industry}</p>
                         </td>
-                        <td className='hidden px-3 py-3 tabular-nums text-slate-700 sm:table-cell'>{formatMillions(deal.dealSize)}</td>
+                        <td className='hidden px-3 py-3 tabular-nums text-slate-300 sm:table-cell'>{formatMillions(deal.dealSize)}</td>
                         <td className='px-3 py-3'>
                           <Badge variant={stageBadgeVariant(deal.stage)}>{deal.stage}</Badge>
                         </td>
@@ -332,8 +337,8 @@ export default function DashboardPage() {
                     ))}
                   </tbody>
                 </table>
-                <div className='border-t border-slate-100 px-5 py-3 text-right'>
-                  <Link href='/deals' className='text-xs font-medium text-indigo-600 hover:text-indigo-700'>
+                <div className='border-t border-slate-700 px-5 py-3 text-right'>
+                  <Link href='/deals' className='text-xs font-medium text-indigo-400 hover:text-indigo-300'>
                     View all deals →
                   </Link>
                 </div>

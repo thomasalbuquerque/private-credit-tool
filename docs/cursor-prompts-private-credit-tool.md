@@ -878,10 +878,10 @@ Review the entire application and apply these final polish improvements:
    - No white backgrounds or light-gray page surfaces anywhere
    Typography (apply consistently across all pages):
    - Page titles: text-2xl font-semibold text-slate-100
-   - Section titles: text-sm font-semibold text-slate-400 uppercase tracking-wider
+   - Section titles: text-sm font-semibold text-slate-200 uppercase tracking-wider
    - Body text: text-sm text-slate-300
    - Muted/secondary: text-xs text-slate-500
-   - Table headers: text-xs font-semibold text-slate-400 uppercase tracking-wider
+   - Table headers: text-xs font-semibold text-slate-200 uppercase tracking-wider
    - Borders and dividers: border-slate-600 or border-slate-700 — subtle, never harsh white
 
 4. COLOR PALETTE AUDIT
