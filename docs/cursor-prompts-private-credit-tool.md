@@ -868,19 +868,29 @@ Review the entire application and apply these final polish improvements:
    The sidebar should collapse to a bottom nav or hamburger on mobile screens (below md breakpoint).
    This doesn't need to be perfect — just not broken.
 
-3. TYPOGRAPHY CONSISTENCY
-   - Page titles: text-2xl font-semibold text-slate-900
-   - Section titles: text-sm font-semibold text-slate-500 uppercase tracking-wider
-   - Body text: text-sm text-slate-700
-   - Muted/secondary: text-xs text-slate-400
-   Apply these consistently across all pages.
+3. DARK THEME & TYPOGRAPHY
+   Apply a full-site dark theme — not just the sidebar. The app should feel like a formal institutional tool for private credit deal teams: restrained, data-dense, and professional (think Bloomberg/PitchBook, not a colorful startup).
+   - Page background: slate-800 (#1e293b) — a dark blue-gray that is clearly dark but not near-black
+   - Sidebar: slate-900 (#0f172a) — one step darker than the page for visual hierarchy
+   - Cards / elevated surfaces: slate-800 or slate-700 with border border-slate-600
+   - Primary accent: blue-500 or indigo-500 (buttons, active nav, links) — use sparingly
+   - Status badges (stage, risk): keep semantic colors but tone them down (e.g. bg-emerald-900/40 text-emerald-300) so they don't clash with the dark palette
+   - No white backgrounds or light-gray page surfaces anywhere
+   Typography (apply consistently across all pages):
+   - Page titles: text-2xl font-semibold text-slate-100
+   - Section titles: text-sm font-semibold text-slate-400 uppercase tracking-wider
+   - Body text: text-sm text-slate-300
+   - Muted/secondary: text-xs text-slate-500
+   - Table headers: text-xs font-semibold text-slate-400 uppercase tracking-wider
+   - Borders and dividers: border-slate-600 or border-slate-700 — subtle, never harsh white
 
 4. COLOR PALETTE AUDIT
-   Ensure the entire app uses the same neutral palette:
-   - Background: slate-50 or gray-50
-   - Sidebar: slate-900
-   - Cards: white with border border-slate-200
-   - Primary accent: indigo-600 or slate-800 (for buttons, active states)
+   Walk every page and component and confirm the dark palette above is applied end-to-end:
+   - Dashboard KPI cards, deals table, deal details header, and all tab content areas
+   - Modals and dropdowns: dark surface (slate-800) with slate-600 border, not white cards
+   - Form inputs: bg-slate-700 border-slate-600 text-slate-100 placeholder:text-slate-500
+   - Hover states: bg-slate-700/50 or bg-slate-600/30 — subtle, not bright
+   - Empty states: muted slate-500 icons and text on the dark background
    - No random colors that don't match the palette
 
 5. NAVIGATION ACTIVE STATE
