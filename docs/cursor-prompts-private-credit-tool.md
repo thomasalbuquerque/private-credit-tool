@@ -1,4 +1,5 @@
 # 📋 Plano de Prompts — Private Credit Underwriting Tool
+
 ### Para usar no Cursor IDE, um por um, na ordem abaixo.
 
 ---
@@ -343,7 +344,7 @@ Page layout:
 
 3. DEALS TABLE
    Columns: Company | Industry | Deal Size | Leverage | Stage | Owner | Risk Score | Actions
-   
+
    - Company: bold text + small industry tag below
    - Deal Size: formatted as "$XXm"
    - Leverage: formatted as "X.Xx EBITDA"
@@ -351,20 +352,20 @@ Page layout:
    - Risk Score: small colored progress bar + number (e.g. "72/100")
    - Owner: avatar initials + name
    - Actions: "View →" link to /deals/[id]
-   
+
    Each row should be clickable (clicking anywhere on row navigates to /deals/[id]).
    Rows should have hover state.
 
 4. NEW DEAL MODAL
    When "+ New Deal" is clicked, show a modal overlay with a form:
    Fields: Company Name, Industry (select), Deal Size ($M), Revenue ($M), EBITDA ($M), Sponsor, Owner
-   
+
    On submit:
    - Call dealService.createDeal() with form data
    - Show a success toast/notification
    - Close the modal
    - Do NOT update the list in real time (add a comment: // TODO: refetch or update state after real POST)
-   
+
    The modal should have a clean design with a dark overlay and white card.
 
 Design: the table should look like a Bloomberg or PitchBook data table — clean rows, good typography, subtle alternating row colors or hover effects.
@@ -391,11 +392,11 @@ Page structure:
    - Company name (large, bold)
    - Sponsor name below (smaller, muted)
    - Stage badge (using Badge component)
-   
+
    Right side (row of KPI chips):
    - Deal Size: $XXm
    - Revenue: $XXm
-   - EBITDA: $XXm  
+   - EBITDA: $XXm
    - Leverage: X.Xx
    - Owner: name with avatar initials
 
@@ -454,7 +455,7 @@ Layout:
    - Interest Rate
    - Maturity
    - Origination Fee
-   
+
    Title of card: "Credit Instrument"
 
 2. COVENANTS TABLE (Card)
@@ -491,13 +492,13 @@ Layout:
    Title: "Diligence Workstreams"
    Table with columns: Workstream | Status | (icon)
    Status uses Badge component: Complete (green) | In Progress (blue) | Pending (gray)
-   
+
    Below table: a completion summary line, e.g. "3 of 5 workstreams complete"
 
 2. FINDINGS SECTION (Card)
    Title: "Key Findings"
    Right of title: a "+ Add Finding" button
-   
+
    List of findings. Each finding card shows:
    - Finding title (bold)
    - Description (muted text, truncated at 2 lines)
@@ -514,13 +515,13 @@ Layout:
    - Mitigation (textarea)
    - Owner (text input)
    - Status (select: Open | Mitigated | Monitoring)
-   
+
    On submit:
    - Call dueDiligenceService.addFinding() with form data + dealId
    - Add the returned finding to local state so it appears in the list immediately
    - Show success message
    - Close modal
-   
+
    Add a comment in the service call:
    // POST /api/due-diligence/findings — currently mocked, persists to in-memory array
 
@@ -860,29 +861,21 @@ Keep the tone professional and concise. This document should impress both a tech
 ```
 Review the entire application and apply these final polish improvements:
 
-1. LOADING STATES
-   All pages that fetch data should show a skeleton loader while loading.
-   Create a simple Skeleton component (gray animated pulse blocks) and use it in:
-   - Dashboard KPI cards
-   - Deals table
-   - Deal details header
-   - Each tab content area
-
-2. EMPTY STATES
+1. EMPTY STATES
    Ensure every list or data section has a proper empty state (icon + message) when data is not found.
 
-3. RESPONSIVE CHECK
+2. RESPONSIVE CHECK
    The sidebar should collapse to a bottom nav or hamburger on mobile screens (below md breakpoint).
    This doesn't need to be perfect — just not broken.
 
-4. TYPOGRAPHY CONSISTENCY
+3. TYPOGRAPHY CONSISTENCY
    - Page titles: text-2xl font-semibold text-slate-900
    - Section titles: text-sm font-semibold text-slate-500 uppercase tracking-wider
    - Body text: text-sm text-slate-700
    - Muted/secondary: text-xs text-slate-400
    Apply these consistently across all pages.
 
-5. COLOR PALETTE AUDIT
+4. COLOR PALETTE AUDIT
    Ensure the entire app uses the same neutral palette:
    - Background: slate-50 or gray-50
    - Sidebar: slate-900
@@ -890,10 +883,10 @@ Review the entire application and apply these final polish improvements:
    - Primary accent: indigo-600 or slate-800 (for buttons, active states)
    - No random colors that don't match the palette
 
-6. NAVIGATION ACTIVE STATE
+5. NAVIGATION ACTIVE STATE
    Make sure the correct sidebar nav item is highlighted based on the current route (use usePathname() from next/navigation).
 
-7. FINAL CHECK
+6. FINAL CHECK
    Run through this checklist and fix anything broken:
    - [ ] Dashboard loads and shows real calculated KPIs from mock data
    - [ ] Deals list shows all 6 deals with correct stage badges
@@ -915,21 +908,21 @@ Report any issues found and fix them.
 
 ## ✅ Ordem de Execução
 
-| # | Prompt | O que cria |
-|---|--------|------------|
-| 1 | Setup do Projeto | Estrutura de pastas e dependências |
-| 2 | Dados Mock JSON | Dados realistas nos arquivos mock-api/ |
-| 3 | Tipos + Serviços | types/index.ts + 4 service files |
-| 4 | Layout + Sidebar | app/layout.tsx + componentes UI base |
-| 5 | Dashboard | app/page.tsx com KPIs e pipeline |
-| 6 | Lista de Deals | app/deals/page.tsx com filtros e modal |
-| 7 | Deal Details + Overview | app/deals/[id]/page.tsx + tab Overview |
-| 8 | Tab Securities | SecuritiesTab.tsx |
-| 9 | Tab Due Diligence | DueDiligenceTab.tsx + modal de findings |
-| 10A | Tab IC Memo (visual) | ICMemoTab.tsx + MemoContent.tsx (estados e renderização) |
-| 10B | Tab IC Memo (LLM real) | .env/.env.example, lib/llm.ts, lib/memoPrompt.ts, app/api/memos/route.ts |
-| 11 | Documentação | SYSTEM_EXPLANATION.md |
-| 12 | Polimento Final | Loading states, responsividade, consistência |
+| #   | Prompt                  | O que cria                                                               |
+| --- | ----------------------- | ------------------------------------------------------------------------ |
+| 1   | Setup do Projeto        | Estrutura de pastas e dependências                                       |
+| 2   | Dados Mock JSON         | Dados realistas nos arquivos mock-api/                                   |
+| 3   | Tipos + Serviços        | types/index.ts + 4 service files                                         |
+| 4   | Layout + Sidebar        | app/layout.tsx + componentes UI base                                     |
+| 5   | Dashboard               | app/page.tsx com KPIs e pipeline                                         |
+| 6   | Lista de Deals          | app/deals/page.tsx com filtros e modal                                   |
+| 7   | Deal Details + Overview | app/deals/[id]/page.tsx + tab Overview                                   |
+| 8   | Tab Securities          | SecuritiesTab.tsx                                                        |
+| 9   | Tab Due Diligence       | DueDiligenceTab.tsx + modal de findings                                  |
+| 10A | Tab IC Memo (visual)    | ICMemoTab.tsx + MemoContent.tsx (estados e renderização)                 |
+| 10B | Tab IC Memo (LLM real)  | .env/.env.example, lib/llm.ts, lib/memoPrompt.ts, app/api/memos/route.ts |
+| 11  | Documentação            | SYSTEM_EXPLANATION.md                                                    |
+| 12  | Polimento Final         | Loading states, responsividade, consistência                             |
 
 ---
 
