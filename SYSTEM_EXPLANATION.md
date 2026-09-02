@@ -2,7 +2,9 @@
 
 ## 1. What Was Built
 
-A working prototype of a deal management and underwriting platform for a private credit fund team. The application covers the underwriting workflow end to end across four modules:
+A working prototype of a deal management and underwriting platform for a private credit fund team. It can be accessed at [https://private-credit-tool.vercel.app](https://private-credit-tool.vercel.app).
+
+The application covers the underwriting workflow end to end across four modules:
 
 - **Deal Pipeline** — a portfolio dashboard and deal list with size, leverage, sponsor, owner and risk score, filterable by stage and industry.
 - **Securities Structuring** — the proposed instrument for each deal: type, amount, pricing, maturity, origination fee, covenant package and collateral.
@@ -21,12 +23,12 @@ IC Memo generation is the exception: it already follows the production shape. `m
 
 ```
   [UI Components]
-       ↓
+  ↓
   [Service Layer]
-       ↓ (reads today)     ↓ (memo generation today)   ↓ (future)
-  [mock-api/*.json]   [POST /api/memos → LLM]     [REST API / Backend]
-                               ↓                          ↓
-                       [mock-api/ic-memos.json]     [Database + LLM]
+  ↓ (reads today)          ↓ (memo generation today)      ↓ (future)
+  [mock-api/*.json]        [POST /api/memos → LLM]        [REST API / Backend]
+                           ↓                              ↓
+                           [mock-api/ic-memos.json]       [Database + LLM]
 ```
 
 ## 3. Data Model
@@ -36,9 +38,9 @@ Five entities, with the Deal as the hub:
 ```
 Deal (1) ──── (1) Security ──── (many) Covenant
   │
-  ├──── (many) Due Diligence Finding
+  ├────────── (many) Due Diligence Finding
   │
-  └──── (1) IC Memo
+  └────────── (1) IC Memo
 ```
 
 - **Deal** — company, industry, deal size, revenue, EBITDA, leverage, sponsor, stage, owner, risk score and a four-factor risk breakdown (financials, collateral, industry, legal), plus timeline and activity history.
@@ -53,150 +55,26 @@ This is a prototype, and the simplifications are deliberate:
 
 - No authentication or authorization.
 - No backend or database. Deal, security and diligence data is loaded in memory and resets on page reload.
-- Creating a deal and adding a finding are mocked client-side; only memo generation calls a real endpoint.
-- Generated memos are written to `mock-api/ic-memos.json` on disk. This is fine for a single-instance demo but is not concurrency-safe and would be a database table in production.
-- GET and POST only — no update or delete operations, to keep scope focused.
+- Creating a deal just presents a confirmation message, and adding a finding is mocked client-side; only memo generation calls a real endpoint.
+- Generated memos are written to `mock-api/ic-memos.json` on disk when running locally. On the deployed instance the serverless filesystem is read-only, so a memo lives only in the open tab and is lost on reload — regenerating it takes one click. This would be a database table in production.
 - The LLM call is unstreamed and unvalidated. The model returns free-form text that the UI parses by section heading, rather than structured JSON validated against a schema.
 - No retry, rate-limit handling, cost tracking or caching around the LLM call.
 - No document upload or financial model ingestion, and no real-time collaboration.
 
-## 5. What More We Would Do With Extra Time
+## 5. What more I would do
 
-In priority order:
+### With a couple extra days of work to finish the demo:
 
-1. Backend API layer (Next.js Route Handlers or Node/Express) backed by PostgreSQL.
-2. Authentication with role-based access.
-3. Harden the LLM layer: structured JSON output with schema validation, streaming into the UI, retries with backoff, prompt versioning, and cost/latency telemetry.
-4. Update and delete operations with a full audit trail.
-5. Document upload with OCR and AI extraction of financial model data (Excel/PDF parsing).
-6. Deal collaboration: comments, @mentions.
-7. IC Memo versioning and review workflows.
-8. Investment scoring model with configurable risk parameters.
-9. PDF export for IC memos and deal summaries.
-10. Notifications by email or Slack for deal progress and critical events.
+1. Backend API (NestJS) backed by PostgreSQL, so we can persist the data and not just load it from memory.
+2. Full Create, Read, Update and Delete operations conecting Frontend and Backend with an audit trail.
+3. Authentication with role-based access, so different users can have different permissions to the data, with each one able to make changes to the site (full deal management).
 
-### More details about item 8
+### Other features to list as sugestions for production in the future
 
-Today, the **Risk Assessment** card (score out of 100 plus four dimension labels — Financials, Collateral, Industry, Legal) is static demo data stored in `mock-api/deals.json`. The UI renders it faithfully, and the IC Memo prompt includes it as context for the LLM, but nothing in the application computes or updates it. New deals get a hardcoded placeholder (`50`, all dimensions `Monitor`).
-
-In production, this would become a dedicated **risk scoring engine** — a server-side service that derives `riskScore` and `riskBreakdown` from real deal inputs, recalculates when underlying data changes, and persists a full history of how the score evolved.
-
-#### What the engine would compute
-
-The output shape stays the same as today (`riskScore: 0–100`, `riskBreakdown` with `green` / `yellow` / `red` per dimension), but every value would be traceable to inputs and rules:
-
-| Dimension | Example inputs | Example rules |
-|-----------|----------------|---------------|
-| **Financials** | Revenue, EBITDA, leverage, margin, revenue concentration, cash conversion | Leverage above fund policy → downgrade; declining EBITDA trend → penalty; high customer concentration (from DD) → downgrade |
-| **Collateral** | Security type, loan-to-value, collateral list, lien position, covenant package strength | First-lien on hard assets → upgrade; thin collateral coverage → downgrade; weak covenant headroom → penalty |
-| **Industry** | Sector, cyclicality, macro exposure, peer default rates | Cyclical or stressed sector → downgrade; defensive sector with stable comps → upgrade |
-| **Legal** | Legal DD workstream status, regulatory findings, litigation, environmental exposure | Open High-severity legal finding → downgrade; clean legal DD with workstream Complete → upgrade |
-
-Each dimension would produce a **sub-score** (0–100). The overall `riskScore` would be a weighted sum of those sub-scores, with weights configurable per fund (e.g. Financials 40%, Collateral 25%, Industry 20%, Legal 15%). Sub-scores would map to status labels using fund-defined thresholds (e.g. ≥ 70 → `green` / Strong, 40–69 → `yellow` / Monitor, &lt; 40 → `red` / Elevated concern).
-
-#### How it would integrate with the rest of the system
-
-```
-  Deal financials ──┐
-  Security / collateral ──┤
-  Industry metadata ──┼──► riskScoringService ──► riskScore + riskBreakdown
-  DD findings ────────────┤         │                      │
-  Fund scoring config ────┘         │                      ▼
-                                    │              risk_score_history (DB)
-                                    ▼
-                            triggered on create / update
-                            of any contributing entity
-```
-
-- **Due Diligence findings** would no longer be independent of the score. Adding, mitigating, or closing a finding would trigger a recalculation of the relevant dimension (e.g. a High finding on customer concentration affects Financials; an environmental issue affects Legal).
-- **Security structuring** changes (collateral added, covenants tightened) would feed the Collateral dimension in real time.
-- **Document ingestion** (item 5) would populate the financial inputs automatically instead of relying on manual entry.
-- The **IC Memo** would continue to receive the score as prompt context, but the numbers would always reflect the latest engine output rather than static JSON.
-
-#### Configuration and governance
-
-The scoring model would be **configurable without code changes**:
-
-- Per-fund **weights** for each dimension.
-- Per-dimension **thresholds and rule sets** (e.g. max leverage 5.0x, min interest coverage 2.0x).
-- **Category tags** on DD findings so the engine knows which dimension to adjust.
-- **Versioned scoring configs** so recalculating an old deal uses the rules that were active at the time, while new deals use the current policy.
-
-Analysts would be able to **override** a dimension or the overall score with a written rationale. Overrides would be stored separately from the computed value, visible in the UI (e.g. "Computed: 48 → Override: 52 — sponsor track record"), and included in the audit trail (item 4).
-
-#### Demo today vs. production engine
-
-| Aspect | Demo today | Production engine |
-|--------|------------|-------------------|
-| **Source** | Fixed fields in `deals.json` | `riskScoringService` backed by API + database |
-| **Calculation** | None | Rules + configurable weights per fund |
-| **Four dimensions** | Hand-written in JSON | Derived from categorized deal, security and DD data |
-| **Due Diligence** | Independent of score | Findings tagged by category; open/closed status drives dimension sub-scores |
-| **New deals** | Always `50` / all Monitor | Initial score computed from submitted financials and industry |
-| **Updates** | Never changes after load | Recalculated on any contributing data change |
-| **Traceability** | None | Full history: inputs, rule version, computed value, optional analyst override |
-
-#### Suggested implementation path
-
-1. Add a `riskScoringService` alongside the existing service layer, with a pure function interface: `(deal, security, diligence, config) → { riskScore, riskBreakdown, breakdownDetail }`.
-2. Store scoring config in the database (or a config file per fund in an early version).
-3. Expose `POST /api/deals/:id/recalculate-risk` and call it automatically after deal, security or finding mutations.
-4. Add a `risk_score_history` table and surface the trend in the Overview tab.
-5. Keep the UI unchanged — it already consumes `riskScore` and `riskBreakdown`; only the data source and computation layer change.
-
-The goal is not a black-box AI score, but a **transparent, auditable underwriting model** that the investment team can tune to their mandate and defend in IC discussions.
-
-## 6. Deal Lifecycle in Production (high-level)
-
-In production, a deal is not a linear walk through the UI tabs (Overview → Securities → Due Diligence → IC Memo). The **stage** is the backbone, and data is filled in incrementally — often in parallel.
-
-```
-Screening  →  Due Diligence  →  IC Review  →  Closed
-```
-
-### Screening
-
-1. **Create deal** — borrower, sector, sponsor, owner, basic financials (from CIM or sponsor intro). Stage: Screening.
-2. **Initial risk score** — computed from limited inputs (financials + industry). Collateral and Legal stay weak until security and legal DD exist.
-3. **Receive materials** — CIM, deck, financial model (manual today; document ingestion in the future).
-4. **Indicative security** — draft terms, covenants and collateral from term sheet (feeds Collateral dimension of the score).
-5. **Go / no-go** — if the thesis holds and risk is within fund policy → advance to Due Diligence.
-
-### Due Diligence
-
-6. **DD kickoff** — workstreams open (Financial, Legal, Commercial, ESG, Technical).
-7. **Parallel work** — findings registered as issues are discovered; security terms refined based on what DD reveals.
-8. **Continuous risk recalculation** — every change to deal data, security/covenants/collateral, or a finding triggers the scoring engine. Score goes up or down as findings are mitigated or new ones appear.
-9. **Advance to IC Review** — when critical workstreams are complete, High findings are mitigated, and security is finalized.
-
-### IC Review
-
-10. **Generate IC Memo** — aggregates deal + security + diligence + current risk score; LLM produces the investment recommendation (already the production-shaped path in the prototype).
-11. **Review and iterate** — memo versions, team comments, adjustments if data changes.
-12. **IC decision** — approve, approve with conditions, reject, or send back to DD.
-
-### Closed
-
-13. **Closing** — deal archived; final memo, security and risk score saved as a historical snapshot.
-
-### Key idea for the presentation
-
-Three layers work together:
-
-| Layer | Role |
-|-------|------|
-| **Stage** | Where the deal is in the process (Screening → DD → IC → Closed) |
-| **Data** | Filled incrementally: overview, security, findings — often in parallel |
-| **Risk** | Always derived from current data; not a one-off step before the memo |
-
-The **IC Memo is the synthesis artifact** at the end of underwriting — it packages everything for the investment committee. It is not the starting point.
-
-### Demo today vs. production flow
-
-| | Demo today | Production |
-|---|------------|------------|
-| Stage | Display only; no gates | Guides what is required at each phase |
-| Data | Pre-loaded in JSON | Built up over time, persisted in DB |
-| Risk | Static | Recalculated on every relevant change |
-| DD ↔ Risk | Independent | Findings feed risk dimensions |
-| IC Memo | Can generate anytime | Ideally at IC Review, with completeness checks |
+1. Harden the LLM layer: structured JSON output with schema validation, streaming into the UI, retries with backoff, prompt versioning, and cost/latency telemetry.
+2. Document upload with OCR and AI extraction of financial model data (Excel/PDF parsing), so we can ingest the data from the documents into the system.
+3. Deal collaboration: comments, @mentions, so we can collaborate on the deals with the team.
+4. IC Memo versioning and review workflows.
+5. Investment scoring engine with formulas and configurable risk parameters.
+6. PDF export for IC memos and deal summaries.
+7. Notifications by email or Slack for deal progress and critical events.
