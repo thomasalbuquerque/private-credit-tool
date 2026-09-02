@@ -4,7 +4,10 @@ import type { DueDiligence, Finding } from '@/types';
 const dueDiligenceRecords = dueDiligenceData as DueDiligence[];
 
 export function getDueDiligenceByDealId(dealId: string): Promise<DueDiligence | undefined> {
-  return Promise.resolve(dueDiligenceRecords.find((record) => record.dealId === dealId));
+  const record = dueDiligenceRecords.find((item) => item.dealId === dealId);
+
+  // Copy so callers never hold a reference to the mutable in-memory record
+  return Promise.resolve(record && { ...record, findings: [...record.findings] });
 }
 
 export function addFinding(finding: Omit<Finding, 'id'>): Promise<Finding> {
@@ -15,7 +18,7 @@ export function addFinding(finding: Omit<Finding, 'id'>): Promise<Finding> {
 
   const record = dueDiligenceRecords.find((item) => item.dealId === finding.dealId);
   if (record) {
-    record.findings.push(newFinding);
+    record.findings.unshift(newFinding);
   }
 
   console.log('Adding finding:', newFinding);
