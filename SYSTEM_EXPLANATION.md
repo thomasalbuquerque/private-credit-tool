@@ -145,3 +145,58 @@ Analysts would be able to **override** a dimension or the overall score with a w
 5. Keep the UI unchanged — it already consumes `riskScore` and `riskBreakdown`; only the data source and computation layer change.
 
 The goal is not a black-box AI score, but a **transparent, auditable underwriting model** that the investment team can tune to their mandate and defend in IC discussions.
+
+## 6. Deal Lifecycle in Production (high-level)
+
+In production, a deal is not a linear walk through the UI tabs (Overview → Securities → Due Diligence → IC Memo). The **stage** is the backbone, and data is filled in incrementally — often in parallel.
+
+```
+Screening  →  Due Diligence  →  IC Review  →  Closed
+```
+
+### Screening
+
+1. **Create deal** — borrower, sector, sponsor, owner, basic financials (from CIM or sponsor intro). Stage: Screening.
+2. **Initial risk score** — computed from limited inputs (financials + industry). Collateral and Legal stay weak until security and legal DD exist.
+3. **Receive materials** — CIM, deck, financial model (manual today; document ingestion in the future).
+4. **Indicative security** — draft terms, covenants and collateral from term sheet (feeds Collateral dimension of the score).
+5. **Go / no-go** — if the thesis holds and risk is within fund policy → advance to Due Diligence.
+
+### Due Diligence
+
+6. **DD kickoff** — workstreams open (Financial, Legal, Commercial, ESG, Technical).
+7. **Parallel work** — findings registered as issues are discovered; security terms refined based on what DD reveals.
+8. **Continuous risk recalculation** — every change to deal data, security/covenants/collateral, or a finding triggers the scoring engine. Score goes up or down as findings are mitigated or new ones appear.
+9. **Advance to IC Review** — when critical workstreams are complete, High findings are mitigated, and security is finalized.
+
+### IC Review
+
+10. **Generate IC Memo** — aggregates deal + security + diligence + current risk score; LLM produces the investment recommendation (already the production-shaped path in the prototype).
+11. **Review and iterate** — memo versions, team comments, adjustments if data changes.
+12. **IC decision** — approve, approve with conditions, reject, or send back to DD.
+
+### Closed
+
+13. **Closing** — deal archived; final memo, security and risk score saved as a historical snapshot.
+
+### Key idea for the presentation
+
+Three layers work together:
+
+| Layer | Role |
+|-------|------|
+| **Stage** | Where the deal is in the process (Screening → DD → IC → Closed) |
+| **Data** | Filled incrementally: overview, security, findings — often in parallel |
+| **Risk** | Always derived from current data; not a one-off step before the memo |
+
+The **IC Memo is the synthesis artifact** at the end of underwriting — it packages everything for the investment committee. It is not the starting point.
+
+### Demo today vs. production flow
+
+| | Demo today | Production |
+|---|------------|------------|
+| Stage | Display only; no gates | Guides what is required at each phase |
+| Data | Pre-loaded in JSON | Built up over time, persisted in DB |
+| Risk | Static | Recalculated on every relevant change |
+| DD ↔ Risk | Independent | Findings feed risk dimensions |
+| IC Memo | Can generate anytime | Ideally at IC Review, with completeness checks |
