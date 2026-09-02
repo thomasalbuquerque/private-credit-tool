@@ -232,7 +232,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* ── Bottom grid: chart + activity + table ── */}
+      {/* ── Bottom grid: risk distribution chart + recent activity + recent deals table ── */}
       <div className='grid grid-cols-1 gap-6 lg:grid-cols-3'>
         {/* Risk Distribution */}
         <div className='lg:col-span-1'>
