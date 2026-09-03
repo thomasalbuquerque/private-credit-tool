@@ -15,7 +15,7 @@ The deal stage (Screening → Due Diligence → IC Review → Closed) is visible
 
 ## 2. Architecture
 
-Built on Next.js (App Router) with TypeScript and Tailwind CSS. The key decision is a **service layer** (`dealService`, `securityService`, `dueDiligenceService`, `memoService`) sitting between the UI and the data source. Components never touch data directly — they call async service functions.
+Built on Next.js with TypeScript and Tailwind CSS. The key decision is a **service layer** (`dealService`, `securityService`, `dueDiligenceService`, `memoService`) sitting between the UI and the data source. Components never touch data directly — they call async service functions.
 
 Today, read operations resolve from local JSON files in `mock-api/`. Tomorrow, each service can be repointed at real REST endpoints (`fetch('/api/deals')`) with no changes to any UI component, because the service signatures are already promise-based.
 
@@ -65,16 +65,16 @@ This is a prototype, and the simplifications are deliberate:
 
 ### With a couple extra days of work to finish the demo:
 
-1. Backend API (NestJS) backed by PostgreSQL, so we can persist the data and not just load it from memory.
-2. Full Create, Read, Update and Delete operations conecting Frontend and Backend with an audit trail.
-3. Authentication with role-based access, so different users can have different permissions to the data, with each one able to make changes to the site (full deal management).
+1. Backend API (NestJS) backed by PostgreSQL database, so we can persist the data and not just load it from memory.
+2. Full CRUD operations (Create, Read, Update, Delete) connecting frontend and backend.
+3. Authentication with role-based access control (RBAC), allowing different users to have distinct permission levels, each able to view and manage deals according to their role.
 
-### Other features to list as sugestions for production in the future
+### Additional features suggested for a future production release
 
-1. Harden the LLM layer: structured JSON output with schema validation, streaming into the UI, retries with backoff, prompt versioning, and cost/latency telemetry.
-2. Document upload with OCR and AI extraction of financial model data (Excel/PDF parsing), so we can ingest the data from the documents into the system.
-3. Deal collaboration: comments, @mentions, so we can collaborate on the deals with the team.
-4. IC Memo versioning and review workflows.
-5. Investment scoring engine with formulas and configurable risk parameters.
+1. Investment scoring engine with formulas and configurable risk parameters.
+2. Harden the LLM layer: structured JSON output with schema validation, streaming into the UI, retries with backoff, prompt versioning, and cost/latency telemetry.
+3. Document upload with OCR and AI extraction of financial model data (Excel/PDF parsing), so we can ingest the data from the documents into the system.
+4. Deal collaboration: comments, @mentions, so we can collaborate on the deals with the team.
+5. IC Memo versioning and review workflows.
 6. PDF export for IC memos and deal summaries.
 7. Notifications by email or Slack for deal progress and critical events.
