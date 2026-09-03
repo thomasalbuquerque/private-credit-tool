@@ -25,11 +25,13 @@ export default function ICMemoTab({ deal }: ICMemoTabProps) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    Promise.all([getMemoByDealId(deal.id), getDueDiligenceByDealId(deal.id)]).then(([memoData, dueDiligenceData]) => {
-      setMemo(memoData ?? null);
-      setFindings(dueDiligenceData?.findings ?? []);
-      setIsLoading(false);
-    });
+    Promise.all([getMemoByDealId(deal.id), getDueDiligenceByDealId(deal.id)])
+      .then(([memoData, dueDiligenceData]) => {
+        setMemo(memoData ?? null);
+        setFindings(dueDiligenceData?.findings ?? []);
+      })
+      .catch(() => setMemo(null))
+      .finally(() => setIsLoading(false));
   }, [deal.id]);
 
   async function handleGenerate() {

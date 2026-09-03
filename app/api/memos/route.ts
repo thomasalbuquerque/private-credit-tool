@@ -19,13 +19,33 @@ const dueDiligenceRecords = dueDiligenceData as DueDiligence[];
 
 const MEMOS_FILE_PATH = path.join(process.cwd(), 'mock-api', 'ic-memos.json');
 
+// Serverless hosts (Vercel) run on a read-only filesystem and do not ship the JSON
+// seed file inside the function bundle. Storing memos on disk is therefore a local
+// convenience only: when it is unavailable the memo is still generated and returned,
+// it just does not survive a page reload.
+function isFilesystemUnavailable(error: unknown): boolean {
+  const code = (error as NodeJS.ErrnoException | null)?.code;
+  return code === 'ENOENT' || code === 'EROFS' || code === 'EACCES' || code === 'EPERM';
+}
+
 async function readMemos(): Promise<ICMemo[]> {
-  const raw = await readFile(MEMOS_FILE_PATH, 'utf-8');
-  return JSON.parse(raw) as ICMemo[];
+  try {
+    const raw = await readFile(MEMOS_FILE_PATH, 'utf-8');
+    return JSON.parse(raw) as ICMemo[];
+  } catch (error) {
+    if (isFilesystemUnavailable(error)) {
+      return [];
+    }
+    throw error;
+  }
 }
 
 async function writeMemos(memos: ICMemo[]): Promise<void> {
-  await writeFile(MEMOS_FILE_PATH, `${JSON.stringify(memos, null, 2)}\n`, 'utf-8');
+  try {
+    await writeFile(MEMOS_FILE_PATH, `${JSON.stringify(memos, null, 2)}\n`, 'utf-8');
+  } catch (error) {
+    console.warn('Memo generated but not persisted to disk:', error);
+  }
 }
 
 export async function POST(request: Request) {
